@@ -124,7 +124,7 @@ class ProductCard extends StatelessWidget {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
-                                
+                                color: Colors.grey.withOpacity(0.5),
                                 image: DecorationImage(
                                   image: CachedNetworkImageProvider(listing.images[0]),
                                   fit: BoxFit.cover

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Tyangi/pages/addListing.dart';
+import 'package:Tyangi/pages/subCategory/subCategories.dart';
 import 'package:async/async.dart';
 
 import 'package:Tyangi/pages/home/homePage.dart';
@@ -28,12 +29,13 @@ class _HomeState extends State<Home> {
     super.initState();
     _pages = <Widget>[
       homePage,
-      Center(
-        child: Text(
-          'Index 1: Business',
-          style: optionStyle,
-        ),
-      ),
+      // Center(
+      //   child: Text(
+      //     'Index 1: Business',
+      //     style: optionStyle,
+      //   ),
+      // ),
+      SubCategories(),
       Center(
         child: Text(
           'Index 2: School',
