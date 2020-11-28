@@ -1,6 +1,8 @@
+import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../utitlities/sizeConfig.dart';
+import '../../subCategory/subCategories.dart';
 // import 'package:marquee/marquee.dart';
 
 class Categories extends StatelessWidget {
@@ -31,14 +33,23 @@ class Categories extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           children: List.generate(
             categories.length,
-            (index) => Container(
+            (index) {
+              
+              return Container(
               // margin: EdgeInsets.symmetric(horizontal: 5),
               child: CategoryCard(
                 icon: categories[index],
                 text: categories[index],
-                press: () {},
+                press: () {
+                  // List<String> subCategories = List<String>();
+                  // subCategories.addAll(await getSubCategories(categories[index]));
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(builder: (_) => SubCategories(categories[index],))
+                    );
+                },
               ),
-            ),
+            );
+            }
           ),
       ),
         ),

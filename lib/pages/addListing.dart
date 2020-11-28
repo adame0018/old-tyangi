@@ -20,7 +20,7 @@ class _AddListingState extends State<AddListing> {
   String condition;
   String contactOption;
   List<String> categories = List();
-  List<String> subCategories = List();
+  List<dynamic> subCategories = List();
   List<Asset> images = List<Asset>();
   String _error;
   DateTime pickedDate;
@@ -117,6 +117,7 @@ class _AddListingState extends State<AddListing> {
      var tempSubCategories;
      tempSubCategories = await getSubCategories(category);
       setState(() {
+        print(tempSubCategories);
         subCategories.clear();
         subCategories.addAll(tempSubCategories);
       });
@@ -214,40 +215,64 @@ class _AddListingState extends State<AddListing> {
   }
 
   void onSubmit() async {
-    // if(
-    //   _titleController.text == null || _titleController.text.isEmpty ||
-    //   _descriptionController.text == null || _descriptionController.text.isEmpty ||
-    //   _priceController.text == null || _priceController.text.isEmpty
-    // ){
-    //   showSnackBar("Please fill All the fields");
-    //   return;
-    // }
-    setState(() {
-      isLoading = true;
-    });
-    // print(imagesURL);
-    var listingId = await postListing(title: _titleController.text, 
-      description: _descriptionController.text, 
-      price: _priceController.text,
-      autoRepost: autoRepost,
-      category: category,
-      subCategory: subCategory
-    );
-    print(listingId);
-    List<String> imagesURL = await saveImage(images, listingId);
-    
-      
-      await firestore.collection('Listings').doc(listingId).update({
-        'images': imagesURL,
-        'id': listingId
-      });
-    
-    // print("reference"+docRef);
-    // print(imagesURL);
-    setState(() {
-      isLoading=false;
-    });
-    showSnackBar("Listing posted");
+    if(
+      _titleController.text == null || _titleController.text.isEmpty ||
+      _descriptionController.text == null || _descriptionController.text.isEmpty ||
+      _priceController.text == null || _priceController.text.isEmpty ||
+      _locationController.text == null || _locationController.text.isEmpty ||
+      category.isEmpty || subCategory.isEmpty || (autoRepost && (pickedDate == null || time == null))
+    ){
+      showSnackBar("Please fill All the fields");
+      return;
+    }
+    else {
+      try{
+
+        setState(() {
+          isLoading = true;
+        });
+        // print(imagesURL);
+        String listingId;
+        if(autoRepost){
+           listingId = await postListing(title: _titleController.text, 
+            description: _descriptionController.text, 
+            price: _priceController.text,
+            autoRepost: autoRepost,
+            category: category,
+            subCategory: subCategory,
+            autoRepostAt: pickedDate.add(Duration(hours: time.hour, minutes: time.minute))
+          );
+        }else {
+          listingId = await postListing(title: _titleController.text, 
+            description: _descriptionController.text, 
+            price: _priceController.text,
+            autoRepost: autoRepost,
+            category: category,
+            subCategory: subCategory,
+          );
+        }
+        print(listingId);
+        List<String> imagesURL = await saveImage(images, listingId);
+        
+          
+          await firestore.collection('Listings').doc(listingId).update({
+            'images': imagesURL,
+            'id': listingId
+          });
+        
+        // print("reference"+docRef);
+        // print(imagesURL);
+        setState(() {
+          isLoading=false;
+        });
+        showSnackBar("Listing posted");
+      } catch(e){
+        showSnackBar("an error occured");
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   Widget autoRepostWidget(){

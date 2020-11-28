@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 class Listing {
   String id;
-  String title, description, price, zipCode, uid;
+  String title, description, price, zipCode, uid, category, subCategory;
   bool autoRepost;
   List<dynamic> images;
 
@@ -14,6 +14,8 @@ class Listing {
     @required this.uid,
     @required this.autoRepost,
     @required this.images,
+    @required this.category,
+    @required this.subCategory
   });
 
   Listing.fromJson(Map<String, dynamic> map){
@@ -27,6 +29,8 @@ class Listing {
     zipCode = map['zipCode'];
     uid = map['uid'];
     autoRepost = map['autoRepost'];
+    category = map['category'];
+    subCategory = map['subCategory'];
     if(map['images'] != null){
       images = List<dynamic>();
       images.addAll(map['images']);
@@ -43,7 +47,9 @@ class Listing {
       'zipCode': zipCode,
       'autoRepost': autoRepost,
       'uid': uid,
-      'images': images
+      'images': images,
+      'category': category,
+      'subCategory': subCategory
     };
   }
   

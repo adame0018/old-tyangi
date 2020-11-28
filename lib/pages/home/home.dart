@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:Tyangi/pages/addListing.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
+import 'package:Tyangi/widgets/InfiniteGridView.dart';
 import 'package:async/async.dart';
 
 import 'package:Tyangi/pages/home/homePage.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../details/details_screen.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -29,13 +31,13 @@ class _HomeState extends State<Home> {
     super.initState();
     _pages = <Widget>[
       homePage,
-      // Center(
-      //   child: Text(
-      //     'Index 1: Business',
-      //     style: optionStyle,
-      //   ),
-      // ),
-      SubCategories(),
+      Center(
+        child: Text(
+          'Index 1: Business',
+          style: optionStyle,
+        ),
+      ),
+      // DetailsScreen(),
       Center(
         child: Text(
           'Index 2: School',

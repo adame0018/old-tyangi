@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../utitlities/sizeConfig.dart';
 import '../../../models/Listing.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../details/details_screen.dart';
 
 class FeaturedListings extends StatelessWidget {
   FeaturedListings({
@@ -23,14 +24,14 @@ class FeaturedListings extends StatelessWidget {
         ),
         // SizedBox(height: getProportionateScreenWidth(20)),
         AspectRatio(
-          aspectRatio: 22/9,
+          aspectRatio: 21.5/9,
                   child: Container(
-            height: _height / 4.5,
+            // height: _height / 3.5,
             child: ListView.builder(
               itemCount: listings.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index){
-                return ProductCard(listing: listings[index]);
+                return ProductCard(listing: listings[index],);
               },
               // children: [
               //       ProductCard(),
@@ -56,12 +57,14 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     Key key,
     this.width = 160,
-    this.aspectRetio = 1.02,
+    this.aspectRatioImage = 1.35,
+    this.aspectRatioCard = 1,
+    this.fontSizeMultiple =1,
     //@required this.product,
     @required this.listing
   }) : super(key: key);
 
-  final double width, aspectRetio;
+  final double width, aspectRatioCard, aspectRatioImage, fontSizeMultiple;
   //final Product product;
   final Listing listing;
 
@@ -78,15 +81,17 @@ class ProductCard extends StatelessWidget {
     //     width: getProportionateScreenWidth(width),
     //     child: 
     GestureDetector(
-          // onTap: () => Navigator.pushNamed(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => DetailsScreen(listing: listing,))),
+          // Navigator.pushNamed(
           //   context,
           //   DetailsScreen.routeName,
           //   arguments: ProductDetailsArguments(product: product),
           // ),
-      child: Container(
+      child: AspectRatio(
+        aspectRatio: aspectRatioCard,
         // margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*0.005, horizontal: 10),
         // height: getProportionateScreenHeight(200),
-        width: _width/2.5,//getProportionateScreenWidth(width),
+        // width: _width/2.5,//getProportionateScreenWidth(width),
         // padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       //       decoration: BoxDecoration(
       //   color: Colors.white,
@@ -104,14 +109,14 @@ class ProductCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12)
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Stack(
                       alignment: AlignmentDirectional.topEnd,
                       children: [AspectRatio(
-                        aspectRatio: 1.5,
+                        aspectRatio: aspectRatioImage,
                         // child: Container(
                         //   padding: EdgeInsets.all(getProportionateScreenWidth(10)),
                         //   decoration: BoxDecoration(
@@ -121,20 +126,24 @@ class ProductCard extends StatelessWidget {
                         //   
                         // child: Hero(
                         //     tag: listing.id,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Colors.grey.withOpacity(0.5),
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider(listing.images[0]),
-                                  fit: BoxFit.cover
-                                )
-                              ),
-                              // child: CachedNetworkImage(
-                              //   imageUrl: listing.images[0],
-                                
-                                 
-                              //   ),
+                            child: Hero(
+                              tag: listing.id,
+                                                          child: Container(
+                                  decoration: BoxDecoration(
+                                    // borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                                    color: Colors.grey.withOpacity(0.5),
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(listing.images[0]),
+                                      fit: BoxFit.cover
+                                    )
+                                  ),
+                                  // child: CachedNetworkImage(
+                                  //   imageUrl: listing.images[0],
+                                    
+                                     
+                                  //   ),
+                                ),
                             )
                             //Image.network(listing.images[0]),
                           //),
@@ -146,39 +155,63 @@ class ProductCard extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey.withAlpha(200),
+                          color: Colors.grey.withAlpha(180),
                         ),
-                        child: Text("\$"+listing.price, style: TextStyle(color: Colors.white),)
+                        child: Text("\$"+listing.price, style: TextStyle(color: Colors.white, fontSize: _height/50*fontSizeMultiple),)
                       )
                       ]
                     ),
-                    SizedBox(height: _height/120),
-                    Flexible(
-                                      child: Text(
-                        listing.title,
-                        style: TextStyle(
-                          color: Colors.blue, fontSize: _height/45, 
-                          fontWeight: FontWeight.w600 ),
-                        maxLines: 2,
+                    SizedBox(height: _height/220),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal:8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                              listing.title,
+                              style: TextStyle(
+                                color: Colors.blue, fontSize: (_height/45)*fontSizeMultiple, 
+                                fontWeight: FontWeight.w600 ),
+                              maxLines: 2,
+                            ),
+                        
+                      // SizedBox(height: _height/150),
+                      // Row(
+                      //   children: [
+                      //     Icon(
+                      //       Icons.location_on,
+                      //       size: _height/70,
+                      //     ),
+                      //     Text(
+                      //       listing.zipCode,
+                      //       style: TextStyle(
+                      //         fontSize: (_height/70)*fontSizeMultiple
+                      //       ),
+                      //       )
+                      //   ],
+                      // )
+                      ],
                       ),
                     ),
-                    SizedBox(height: _height/150),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          size: _height/70,
-                        ),
-                        Flexible(
-                          child: Text(
-                            listing.zipCode,
-                            style: TextStyle(
-                              fontSize: _height/70
+                    SizedBox(height: _height/350),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: _height/70,
                             ),
-                            )
-                          )
-                      ],
-                    )
+                            Text(
+                              listing.zipCode,
+                              style: TextStyle(
+                                fontSize: (_height/70)*fontSizeMultiple
+                              ),
+                              )
+                          ],
+                        ),
+                    ),
+                     SizedBox(height: _height/250),
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     //   children: [
