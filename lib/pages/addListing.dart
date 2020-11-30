@@ -145,6 +145,8 @@ class _AddListingState extends State<AddListing> {
     if(t != null)
       setState(() {
         time = t;
+        // print(pickedDate.add(Duration(hours: time.hour, minutes: time.minute)).toUtc().minute);
+        
       });
   }
 

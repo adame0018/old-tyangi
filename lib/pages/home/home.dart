@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Tyangi/pages/addListing.dart';
+import 'package:Tyangi/pages/profile/ProfilePage.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
 import 'package:Tyangi/widgets/InfiniteGridView.dart';
 import 'package:async/async.dart';
@@ -31,12 +32,13 @@ class _HomeState extends State<Home> {
     super.initState();
     _pages = <Widget>[
       homePage,
-      Center(
-        child: Text(
-          'Index 1: Business',
-          style: optionStyle,
-        ),
-      ),
+      ProfilePage(),
+      // Center(
+      //   child: Text(
+      //     'Index 1: Business',
+      //     style: optionStyle,
+      //   ),
+      // ),
       // DetailsScreen(),
       Center(
         child: Text(

@@ -108,12 +108,30 @@ Future<List<Listing>> getListings() async{
   //      })
   // );
   // return listings;
-  var documents = await FirebaseFirestore.instance.collection('Listings').get();
+  var documents = await FirebaseFirestore.instance.collection('Listings').orderBy('createdAt', descending: true).get();
   documents.docs.forEach((doc) async {
     listings.add(new Listing.fromJson(doc.data()));
   });
   return listings;
 }
+
+Future<List<Listing>> getListingsBySubCategory({String subCategory}) async{
+  List<Listing> listings = List<Listing>();
+  // await FirebaseFirestore.instance.collection('Listings').get().then(
+  //   (value) => value.docs.forEach(
+  //     (doc) {
+  //         listings.add(new Listing.fromJson(doc.data()));
+  //      })
+  // );
+  // return listings;
+  var documents = await FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: subCategory).orderBy('createdAt', descending: true).get();
+  documents.docs.forEach((doc) async {
+    listings.add(new Listing.fromJson(doc.data()));
+  });
+  return listings;
+}
+
+
 
 Future<AppUser> getCurrentUser() async {
   User currentUser = FirebaseAuth.instance.currentUser;

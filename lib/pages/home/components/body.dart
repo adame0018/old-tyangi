@@ -1,6 +1,8 @@
 import 'package:Tyangi/pages/home/components/categories.dart';
 import 'package:Tyangi/pages/home/components/featuredListings.dart';
+import 'package:Tyangi/pages/subCategory/subCategories.dart';
 import 'package:Tyangi/widgets/InfiniteGridView.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../utitlities/firebase.dart';
 import 'package:flutter/material.dart';
 import '../../../models/Listing.dart';
@@ -120,6 +122,7 @@ class _BodyState extends State<Body> {
             SizedBox(
               height:25,
             ),
+            
             // FeaturedListings(listings: widget.featuredListings, title: "Popular",),
             // SizedBox(
             //   height:25,
@@ -152,6 +155,7 @@ class _BodyState extends State<Body> {
     );
   }
 }
+
 
 
 

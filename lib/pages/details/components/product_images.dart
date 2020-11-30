@@ -4,15 +4,18 @@ import 'package:flutter/material.dart';
 // import '../../../constants.dart';
 import '../../../utitlities/sizeConfig.dart';
 import '../../../models/Listing.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProductImages extends StatefulWidget {
   const ProductImages({
     Key key,
     @required this.listing,
+    @required this.pageTag
   }) : super(key: key);
 
   // final Product product;
   final Listing listing;
+  final String pageTag;
 
   @override
   _ProductImagesState createState() => _ProductImagesState();
@@ -31,8 +34,8 @@ class _ProductImagesState extends State<ProductImages> {
         AspectRatio(
           aspectRatio: 1.5,
           child: Hero(
-            tag: widget.listing.id,
-            child: Image.network(widget.listing.images[selectedImage], fit: BoxFit.contain,),
+            tag: widget.listing.id+widget.pageTag,
+            child: CachedNetworkImage(imageUrl: widget.listing.images[selectedImage], fit: BoxFit.contain,),
           ),
         ),
          SizedBox(height: getProportionateScreenWidth(20)),
@@ -73,7 +76,7 @@ class _ProductImagesState extends State<ProductImages> {
           border: Border.all(
               color: Theme.of(context).primaryColor.withOpacity(selectedImage == index ? 1 : 0)),
         ),
-        child: Image.network(widget.listing.images[index]),
+        child: CachedNetworkImage(imageUrl: widget.listing.images[index]),
       ),
     );
   }

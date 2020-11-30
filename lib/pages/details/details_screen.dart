@@ -9,10 +9,12 @@ import '../../models/Listing.dart';
 class DetailsScreen extends StatelessWidget {
   const DetailsScreen({
     Key key,
-    @required this.listing
+    @required this.listing,
+    @required this.pageTag
   }) : super(key: key);
   // static String routeName = "/details";
   final Listing listing;
+  final String pageTag;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class DetailsScreen extends StatelessWidget {
         backgroundColor: Colors.transparent
       ),
       // CustomAppBar(rating: 3),
-      body: SingleChildScrollView(child: Body(listing: listing,)),
+      body: SingleChildScrollView(child: Body(listing: listing,pageTag: pageTag,)),
     );
   }
 }

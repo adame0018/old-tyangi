@@ -1,26 +1,24 @@
-import 'dart:ui';
-
 import 'package:Tyangi/models/Listing.dart';
 import 'package:Tyangi/pages/home/components/featuredListings.dart';
-import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class InfiniteGridView extends StatefulWidget {
-  InfiniteGridView({ScrollController scrollController});
-  ScrollController scrollController;
+class ListingsBySubCategory extends StatefulWidget {
+  final String subCategory;
+  ListingsBySubCategory({
+    @required this.subCategory
+  });
   @override
-  _InfiniteGridViewState createState() => _InfiniteGridViewState();
+  _ListingsBySubCategoryState createState() => _ListingsBySubCategoryState();
 }
 
-class _InfiniteGridViewState extends State<InfiniteGridView> {
+class _ListingsBySubCategoryState extends State<ListingsBySubCategory> {
   List dataList = new List<Listing>();
   bool isLoading = false;
   int pageCount = 1;
   ScrollController scrollController;
   var _lastListing;
-  
 
   Future<void> addItemIntoLisT() async {
     // for (int i = (pageCount * 10) - 10; i < pageCount * 10; i++) {
@@ -33,7 +31,7 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
     // });
     QuerySnapshot snap;
     if(_lastListing == null){
-      snap = await FirebaseFirestore.instance.collection('Listings').limit(10).get();
+      snap = await FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: widget.subCategory).orderBy('createdAt').limit(24).get();
       
       // setState(() {
       //     snap.docs.forEach((doc) async {
@@ -44,7 +42,7 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
       // });
     }
     else {
-      snap = await FirebaseFirestore.instance.collection('Listings').startAfterDocument(_lastListing).limit(8).get();
+      snap = await FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: widget.subCategory).orderBy('createdAt').startAfterDocument(_lastListing).limit(16).get();
       // setState(() {
           
       //     // _lastListing = snap.docs[snap.size - 1];
@@ -71,6 +69,8 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
       // );
     }
   }
+
+  
 
   _scrollListener() {
     if (scrollController.offset >=
@@ -104,22 +104,21 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
     ////LOADING FIRST  DATA
     addItemIntoLisT();
 
-    // scrollController = new ScrollController(initialScrollOffset: 5.0)
-    // scrollController.addListener(_scrollListener);
+    scrollController = new ScrollController(initialScrollOffset: 5.0);
+    scrollController.addListener(_scrollListener);
   }
 
   @override
   Widget build(BuildContext context) {
-    return 
-    // Scaffold(
-    //   appBar: new AppBar(),
-    //         body: 
-            // Column(
-            //   children: [
-                // Flexible(
-                //                   child: 
-                                  GridView.count(
-                    // controller: scrollController,
+    return Scaffold(
+      appBar: CupertinoNavigationBar(
+        middle: Text(widget.subCategory),
+      ),
+      body: dataList.isEmpty ? Center(
+        child: Text("No Listings Found"),
+      ) : 
+        GridView.count(
+                    controller: scrollController,
                     scrollDirection: Axis.vertical,
                     crossAxisCount: 4,
                     mainAxisSpacing: 10.0,
@@ -129,7 +128,7 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
                     // physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       ...dataList.map((value) {
-                        return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8, pageTag: "HomeGrid",);
+                        return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8, pageTag: "subCategory",);
                       // Container(
                       //       alignment: Alignment.center,
                       //       height: MediaQuery.of(context).size.height * 0.2,
@@ -144,11 +143,7 @@ class _InfiniteGridViewState extends State<InfiniteGridView> {
                     }).toList(),
                     
                     ]
-                  );
-                // );
-    //             isLoading ? CircularProgressIndicator() : SizedBox()
-    //           ],
-    //         );
-    // // );
+                  )
+    );
   }
 }

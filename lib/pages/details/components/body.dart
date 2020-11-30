@@ -16,9 +16,11 @@ import '../../../utitlities/firebase.dart';
 class Body extends StatelessWidget {
   // final Product product;
   const Body({Key key,
-   @required this.listing
+   @required this.listing,
+   @required this.pageTag
   }) : super(key: key);
   final Listing listing;
+  final String pageTag;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class Body extends StatelessWidget {
     return Column(
       children: [
         // SizedBox(height: 20),
-        ProductImages(listing: listing,),
+        ProductImages(listing: listing,pageTag: pageTag,),
         TopRoundedContainer(
           color: Colors.white,
           child: Column(
@@ -100,7 +102,7 @@ class UserDetails extends StatelessWidget {
                       // border: Border.all(width: 0.5),
                       image: DecorationImage(
                         image: CachedNetworkImageProvider(user.profilePic),
-                        fit: BoxFit.fill
+                        fit: BoxFit.cover
                       )
                     ),
                     ),
