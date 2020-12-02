@@ -1,3 +1,4 @@
+import 'package:Tyangi/widgets/ListingCard.dart';
 import 'package:flutter/material.dart';
 import '../../../utitlities/sizeConfig.dart';
 import '../../../models/Listing.dart';
@@ -31,7 +32,7 @@ class FeaturedListings extends StatelessWidget {
               itemCount: listings.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index){
-                return ProductCard(listing: listings[index], pageTag: "Home",);
+                return ListingCard(listing: listings[index], pageTag: "Home",);
               },
               // children: [
               //       ProductCard(),

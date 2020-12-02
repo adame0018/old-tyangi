@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppUser{
   String uid, email, name, profilePic, zipCode, contact;
+  int numRatings;
+  double avgRating;
 
   AppUser({
     @required this.uid,
@@ -10,6 +12,8 @@ class AppUser{
     @required this.profilePic,
     @required this.zipCode,
     @required this.contact,
+    this.avgRating = 0,
+    this.numRatings = 0,
   });
 
   AppUser.fromJson(Map<String, dynamic> map){
@@ -22,6 +26,8 @@ class AppUser{
     contact = map['contact'];
     zipCode = map['zipCode'];
     profilePic = map['profilePic'];
+    numRatings = map['numRatings'];
+    avgRating = map['avgRating'].toDouble();
   }
 
   toJson(){
@@ -33,6 +39,8 @@ class AppUser{
       'contact': contact,
       'zipCode': zipCode,
       'profilePic': profilePic,
+      'numRatings': numRatings,
+      'avgRating': avgRating
     };
   }
 }

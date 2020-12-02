@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:Tyangi/models/appUser.dart';
+import 'package:Tyangi/pages/profile/ProfilePage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:shop_app/components/default_button.dart';
 // import 'package:shop_app/models/Product.dart';
@@ -73,57 +77,64 @@ class UserDetails extends StatelessWidget {
           if(snap.connectionState == ConnectionState.done && snap.hasData){
             AppUser user = snap.data;
 
-          return Container(
-          
-            padding: EdgeInsets.all(6),
-            margin: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              // border: Border(top: BorderSide(width: 1, color: Colors.grey), bottom: BorderSide(width: 1, color: Colors.grey))
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.3),
-                  spreadRadius: 2,
-                  blurRadius: 3,
-                )
-              ]
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      // border: Border.all(width: 0.5),
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(user.profilePic),
-                        fit: BoxFit.cover
-                      )
-                    ),
-                    ),
-                    SizedBox(width: 10,),
-                    Text("${user.name}", style: Theme.of(context).textTheme.headline5,),
-                  ],
-                ),
-                Row(
-                      children: [
-                        Text(
-                          "3.0",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+          return InkWell(
+
+            onTap: (){
+              Platform.isAndroid ? 
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => ProfilePage(uid: user.uid))) :
+                Navigator.of(context).push(CupertinoPageRoute(builder: (_) => ProfilePage(uid: user.uid)));
+            },
+            child: Container(
+              padding: EdgeInsets.all(6),
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                // border: Border(top: BorderSide(width: 1, color: Colors.grey), bottom: BorderSide(width: 1, color: Colors.grey))
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                  )
+                ]
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        // border: Border.all(width: 0.5),
+                        image: DecorationImage(
+                          image: CachedNetworkImageProvider(user.profilePic),
+                          fit: BoxFit.cover
+                        )
+                      ),
+                      ),
+                      SizedBox(width: 10,),
+                      Text("${user.name}", style: Theme.of(context).textTheme.headline5,),
+                    ],
+                  ),
+                  Row(
+                        children: [
+                          Text(
+                            "3.0",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 5),
-                      Icon(Icons.star, color: Colors.yellow,),
-                      ],
-                    ),
-              ],
+                          const SizedBox(width: 5),
+                        Icon(Icons.star, color: Colors.yellow,),
+                        ],
+                      ),
+                ],
+              ),
             ),
           );
           } else{

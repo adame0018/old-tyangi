@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 class Listing {
   String id;
   String title, description, price, zipCode, uid, category, subCategory;
   bool autoRepost;
   List<dynamic> images;
+  Timestamp createdAt, repostAt;
 
   Listing({
     @required this.id,
@@ -15,7 +17,9 @@ class Listing {
     @required this.autoRepost,
     @required this.images,
     @required this.category,
-    @required this.subCategory
+    @required this.subCategory,
+    @required this.createdAt,
+    @required this.repostAt,
   });
 
   Listing.fromJson(Map<String, dynamic> map){
@@ -31,6 +35,8 @@ class Listing {
     autoRepost = map['autoRepost'];
     category = map['category'];
     subCategory = map['subCategory'];
+    createdAt = map['createdAt'];
+    repostAt = map['repostAt'];
     if(map['images'] != null){
       images = List<dynamic>();
       images.addAll(map['images']);
@@ -49,7 +55,9 @@ class Listing {
       'uid': uid,
       'images': images,
       'category': category,
-      'subCategory': subCategory
+      'subCategory': subCategory,
+      'createdAt': createdAt,
+      'repostAt': repostAt
     };
   }
   

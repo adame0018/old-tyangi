@@ -1,4 +1,5 @@
 import 'package:Tyangi/models/appUser.dart';
+import 'package:Tyangi/models/rating.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/Listing.dart';
@@ -117,14 +118,16 @@ Future<List<Listing>> getListings() async{
 
 Future<List<Listing>> getListingsBySubCategory({String subCategory}) async{
   List<Listing> listings = List<Listing>();
-  // await FirebaseFirestore.instance.collection('Listings').get().then(
-  //   (value) => value.docs.forEach(
-  //     (doc) {
-  //         listings.add(new Listing.fromJson(doc.data()));
-  //      })
-  // );
-  // return listings;
   var documents = await FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: subCategory).orderBy('createdAt', descending: true).get();
+  documents.docs.forEach((doc) async {
+    listings.add(new Listing.fromJson(doc.data()));
+  });
+  return listings;
+}
+
+Future<List<Listing>> getListingsByUser({String uid}) async{
+  List<Listing> listings = List<Listing>();
+  var documents = await FirebaseFirestore.instance.collection('Listings').where('uid', isEqualTo: uid).orderBy('createdAt', descending: true).get();
   documents.docs.forEach((doc) async {
     listings.add(new Listing.fromJson(doc.data()));
   });
@@ -142,9 +145,59 @@ Future<AppUser> getCurrentUser() async {
 
 Future<AppUser> getUserFromId(String uid) async {
 
-  var snapshot = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+  var snapshot = await FirebaseFirestore.instance.collection('Users').doc("fe5aOpTwwuVNNFcHn6J7CUkZIyA2").get();
+  print("asnda");
+  print(snapshot.exists);
+  print(snapshot.data());
   var user = AppUser.fromJson(snapshot.data());
   return user;
+}
+
+Future<void> addRating({String uid, Rating rating}) {
+  final user =
+      FirebaseFirestore.instance.collection('Users').doc(uid);
+  final newReview = user.collection('ratings').doc();
+
+  return FirebaseFirestore.instance.runTransaction((Transaction transaction) {
+    return transaction
+        .get(user)
+        .then((DocumentSnapshot doc) => AppUser.fromJson(doc.data()))
+        .then((AppUser fresh) {
+      final newRatings = fresh.numRatings + 1;
+      final newAverage =
+          ((fresh.numRatings * fresh.avgRating) + rating.rating) / newRatings;
+
+      transaction.update(user, {
+        'numRatings': newRatings,
+        'avgRating': newAverage,
+      });
+
+      transaction.set(newReview, {
+        'rating': rating.rating,
+        'comment': rating.comment,
+        'timestamp': rating.timestamp ?? FieldValue.serverTimestamp(),
+        'userId': rating.uid,
+      });
+    });
+  });
+}
+
+Stream<List<Rating>> getFeedbackForUser(String uid) {
+  // List<Rating> feedbacks = List<Rating>();
+  // var documents = await FirebaseFirestore.instance.collection('Users/$uid/ratings').get();
+  // documents.docs.forEach((doc) async {
+  //   feedbacks.add(new Rating.fromSnapshot(doc));
+  // });
+  // return feedbacks;
+  Stream<QuerySnapshot> stream = FirebaseFirestore.instance.collection('Users/$uid/ratings').snapshots();
+
+    return stream.map(
+      (qShot) => qShot.docs.map(
+        (doc) => Rating.fromSnapshot(
+              doc  
+            )
+      ).toList()
+    );
 }
 
 // Future<List<Listing>> getListingsWithLimit() async{

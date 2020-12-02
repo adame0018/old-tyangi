@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:Tyangi/pages/addListing.dart';
 import 'package:Tyangi/pages/profile/ProfilePage.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
+import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:Tyangi/widgets/InfiniteGridView.dart';
+import 'package:Tyangi/widgets/ListingCard.dart';
 import 'package:async/async.dart';
 
 import 'package:Tyangi/pages/home/homePage.dart';
@@ -32,7 +34,7 @@ class _HomeState extends State<Home> {
     super.initState();
     _pages = <Widget>[
       homePage,
-      ProfilePage(),
+      ProfilePage(uid: FirebaseAuth.instance.currentUser.uid,),
       // Center(
       //   child: Text(
       //     'Index 1: Business',
@@ -40,6 +42,15 @@ class _HomeState extends State<Home> {
       //   ),
       // ),
       // DetailsScreen(),
+      // GridView.count(
+      //   crossAxisCount: 2,
+      //   children: [
+      //     ListingCard(),
+      //     ListingCard(),
+      //     ListingCard(),
+      //     ListingCard(),
+      //   ],
+      // )
       Center(
         child: Text(
           'Index 2: School',

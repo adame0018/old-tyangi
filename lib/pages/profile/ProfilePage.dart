@@ -1,11 +1,18 @@
 import 'package:Tyangi/models/Listing.dart';
+import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/pages/home/components/featuredListings.dart';
+import 'package:Tyangi/pages/profile/FeedBack.dart';
 import 'package:Tyangi/pages/profile/topSlider.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
+import 'package:Tyangi/widgets/ListingCard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
 class ProfilePage extends StatefulWidget {
+  ProfilePage({@required this.uid});
+  final String uid;
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -14,6 +21,9 @@ class _ProfilePageState extends State<ProfilePage>
 with TickerProviderStateMixin{
   TabController _tabController;
   List<Listing> listings = List<Listing>();
+  User currentUser;
+  AppUser user;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   loadListings()async {
     var temp = await getListings();
@@ -22,10 +32,19 @@ with TickerProviderStateMixin{
       listings.addAll(temp);
     });
   }
+  loadUser() async {
+    var temp = await getUserFromId(widget.uid);
+    setState(() {
+      user = temp;
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
     _tabController = TabController(length: 2, vsync: this);
+    currentUser = FirebaseAuth.instance.currentUser;
+    _scaffoldKey = GlobalKey<ScaffoldState>();
+    loadUser();
     loadListings();
     super.initState();
   }
@@ -34,18 +53,20 @@ with TickerProviderStateMixin{
     var _height = MediaQuery.of(context).size.height;
     var _width = MediaQuery.of(context).size.width;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: CupertinoNavigationBar(
         middle: Text("Profile")
       ),
 
-      body: Padding(
+      body: user == null ? Center(child: CircularProgressIndicator()) : 
+      Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             Container(
               width: _width,
               height: _height/4,
-              child: TopSlider()
+              child: TopSlider(user: user,)
             ),
             Expanded(
                           child: Column(
@@ -76,11 +97,14 @@ with TickerProviderStateMixin{
                           // }
                           children: [
                             ...listings.map((value) {
-                                return ProductCard(listing: value, pageTag: "Profile",);
+                                return ListingCard(listing: value, pageTag: "Profile", showMenu: value.uid == currentUser.uid);
                             }).toList(),
                           ],
                         ),
-                        Text("Feedback",)
+                        Flex(
+                          direction: Axis.vertical,
+                          children: [FeedbackPage(uid: widget.uid, scaffoldKey: _scaffoldKey,)]
+                          )
                       ]
                     ),
                   ),

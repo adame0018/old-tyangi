@@ -104,7 +104,7 @@ Widget entryField(String hint,
           
         ),
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        placeholder: "Description",
+        placeholder: hint,
         placeholderStyle: TextStyle(
           fontSize: 18,
           color: CupertinoColors.placeholderText

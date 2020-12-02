@@ -1,5 +1,6 @@
 import 'package:Tyangi/models/Listing.dart';
 import 'package:Tyangi/pages/home/components/featuredListings.dart';
+import 'package:Tyangi/widgets/ListingCard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -128,7 +129,7 @@ class _ListingsBySubCategoryState extends State<ListingsBySubCategory> {
                     // physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       ...dataList.map((value) {
-                        return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8, pageTag: "subCategory",);
+                        return ListingCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8, pageTag: "subCategory",);
                       // Container(
                       //       alignment: Alignment.center,
                       //       height: MediaQuery.of(context).size.height * 0.2,
