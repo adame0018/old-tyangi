@@ -52,10 +52,26 @@ class _HomePageState extends State<HomePage> {
     await  loadFeaturedListings();
     return;
   }
+
+  Future<void> signOut() async{
+    await FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
-  
+    var _height= MediaQuery.of(context).size.height;
     return Scaffold(
+      drawer: Drawer(
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: _height/20, horizontal: 10),
+          child: Column(
+              children: [OutlinedButton(
+                child: Text("Sign Out"),
+                onPressed: signOut,  
+              )]
+            ),
+        )
+      ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       //   floatingActionButton: SizedBox(
       //     height: 50,

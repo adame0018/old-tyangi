@@ -4,6 +4,7 @@ import 'package:Tyangi/pages/addListing.dart';
 import 'package:Tyangi/pages/profile/ProfilePage.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
+import 'package:Tyangi/utitlities/zipCodes.dart';
 import 'package:Tyangi/widgets/InfiniteGridView.dart';
 import 'package:Tyangi/widgets/ListingCard.dart';
 import 'package:async/async.dart';
@@ -14,6 +15,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../details/details_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:csv/csv.dart';
+import 'dart:convert';
+
 
 class Home extends StatefulWidget {
   @override
@@ -27,6 +32,18 @@ class _HomeState extends State<Home> {
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   List<Widget> _pages;
   PageController _pageController;
+
+  loadCsv() async{
+    final myData = await rootBundle.loadString('assets/zips.json');
+    List jsonData = json.decode(myData);
+    print(jsonData[0]);
+    var result = jsonData.singleWhere((element) => element['zip code'] == '35006');
+    print(result);
+    //List<List<dynamic>> csvTable = CsvToListConverter().convert(myData);
+
+    
+    //print(csvTable);
+  }
 
   @override
   void initState() {
@@ -52,10 +69,10 @@ class _HomeState extends State<Home> {
       //   ],
       // )
       Center(
-        child: Text(
-          'Index 2: School',
-          style: optionStyle,
-        ),
+        child: FlatButton(
+          onPressed: getZipCodes, 
+          child: Text("test")
+        )
       ),
     ];
     _pageController = PageController();

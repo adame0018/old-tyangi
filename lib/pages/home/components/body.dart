@@ -2,6 +2,8 @@ import 'package:Tyangi/pages/home/components/categories.dart';
 import 'package:Tyangi/pages/home/components/featuredListings.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
 import 'package:Tyangi/widgets/InfiniteGridView.dart';
+import 'package:Tyangi/widgets/sliders/premiumSlider.dart';
+import 'package:Tyangi/widgets/sliders/servicesSlider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../utitlities/firebase.dart';
 import 'package:flutter/material.dart';
@@ -117,12 +119,16 @@ class _BodyState extends State<Body> {
         child: Column(
           children: [
             Categories(categories: widget.categories),
-            
+            PremiumSlider(title: "Premium"),
+
+            SizedBox(
+              height:25,
+            ),
             FeaturedListings(listings: widget.featuredListings, title: "Featured"),
             SizedBox(
               height:25,
             ),
-            
+            ServicesSlider(title: "Services")
             // FeaturedListings(listings: widget.featuredListings, title: "Popular",),
             // SizedBox(
             //   height:25,

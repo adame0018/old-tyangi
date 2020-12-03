@@ -114,7 +114,7 @@ class _ListingCardState extends State<ListingCard> {
                     Row(
                       children: [
                         Icon(Icons.location_on_outlined, size: _height/70,),
-                        Text("location", 
+                        Text(widget.listing.zipCode, 
                           style: TextStyle(
                               fontSize: (_height/70)*widget.fontSizeMultiple
                             )
