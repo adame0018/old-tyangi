@@ -2,9 +2,10 @@ import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/models/rating.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import '../models/Listing.dart';
 
-Future<void> setupUser({String name, String email, String contact, String zipCode}) async {
+Future<void> setupUser({String name, String email, String contact, String zipCode, GeoFirePoint geoPoint}) async {
   String uid = FirebaseAuth.instance.currentUser.uid.toString();
   CollectionReference reference = FirebaseFirestore.instance.collection('Users');
   await reference.doc(uid).set({
@@ -13,7 +14,10 @@ Future<void> setupUser({String name, String email, String contact, String zipCod
     'name': name,
     'contact': contact,
     'zipCode': zipCode,
-    'profilePic': null,
+    'profilePic': '',
+    'avgRating': 0,
+    'numRatings': 0,
+    'position': geoPoint.data
   });
   return;
 }
@@ -36,10 +40,17 @@ Future<String> getUserName() async{
   return name;
 }
 
+Future<GeoFirePoint>getUserGeoPoint(String uid)async{
+  var user = await getUserFromId(uid);
+  GeoFirePoint geoPoint = Geoflutterfire().point(latitude: user.position['geopoint'].latitude, longitude: user.position['geopoint'].longitude);
+  return geoPoint;
+}
+
 Future<String> postListing({String title, String description, String price, bool autoRepost, String category, String subCategory, DateTime autoRepostAt}) async {
   
     String uid  = FirebaseAuth.instance.currentUser.uid;
     var zipCode = await getUserZipCode();
+    var geoPoint = await getUserGeoPoint(uid);
     CollectionReference reference = FirebaseFirestore.instance.collection('Listings');
     var docRef = autoRepost ? await reference.add({
       'uid': uid,
@@ -51,7 +62,8 @@ Future<String> postListing({String title, String description, String price, bool
       'autoRepost': autoRepost,
       'zipCode': zipCode,
       'createdAt': FieldValue.serverTimestamp(),
-      'autoRepostAt': autoRepostAt.toUtc()
+      'autoRepostAt': autoRepostAt.toUtc(),
+      'position': geoPoint.data
     }) : 
       await reference.add({
       'uid': uid,
@@ -63,7 +75,8 @@ Future<String> postListing({String title, String description, String price, bool
       'autoRepost': autoRepost,
       'zipCode': zipCode,
       'createdAt': FieldValue.serverTimestamp(),
-      'autoRepostAt': null
+      'autoRepostAt': null,
+      'position': geoPoint.data
     });
     return docRef.id;
 
@@ -145,7 +158,7 @@ Future<AppUser> getCurrentUser() async {
 
 Future<AppUser> getUserFromId(String uid) async {
 
-  var snapshot = await FirebaseFirestore.instance.collection('Users').doc("fe5aOpTwwuVNNFcHn6J7CUkZIyA2").get();
+  var snapshot = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
   print("asnda");
   print(snapshot.exists);
   print(snapshot.data());

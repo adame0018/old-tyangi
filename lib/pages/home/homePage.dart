@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   User user;
   List<String> categories = List<String>();
   List<Listing> featuredListings = List<Listing>();
+  double radius = 50*1.6;
 
   Future<void> loadCategories() async {
     
@@ -68,7 +69,22 @@ class _HomePageState extends State<HomePage> {
               children: [OutlinedButton(
                 child: Text("Sign Out"),
                 onPressed: signOut,  
-              )]
+              ),
+              Slider(
+                max: 50*1.6,
+                min: 10*1.6,
+                value: radius,
+                divisions: 5,
+                onChanged: (rad) async{
+                  // await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser.uid).update({
+                  //   'radius': rad
+                  // });
+                  setState(() {
+                    radius=rad;
+                  });
+                }
+              )
+              ]
             ),
         )
       ),
@@ -97,7 +113,7 @@ class _HomePageState extends State<HomePage> {
           onRefresh: _onRefresh,
           child: categories.isEmpty || featuredListings.isEmpty ? 
             Center(child: CircularProgressIndicator()) :
-            Body(categories: categories, featuredListings: featuredListings)
+            Body(categories: categories, featuredListings: featuredListings, radius: radius)
         )
       
       );

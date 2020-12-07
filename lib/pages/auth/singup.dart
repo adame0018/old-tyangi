@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
@@ -8,6 +10,8 @@ import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:flutter_recaptcha_v2/flutter_recaptcha_v2.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as geocoding; 
+import 'package:http/http.dart' as http;
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -63,6 +67,24 @@ class _SignUpState extends State<SignUp> {
     
     
     super.initState();
+  }
+
+  Future<GeoFirePoint> getGeoPoint(String zipCode) async{
+    final response = await http.get('https://www.zipcodeapi.com/rest/WJ2jyOE36BNEtlgY6Tr2bQNMskcg87eB7c5V9nNZfjGWQnNWbgmyjJBeKC7rlQfN/info.json/$zipCode/degrees');
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    var result = jsonDecode(response.body);
+    var lat = result['lat'];
+    var long = result['lng'];
+    GeoFirePoint geopoint = Geoflutterfire().point(latitude: lat, longitude: long);
+    return geopoint;
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    showSnackBar("An error occured with zipCode");
+  }
   }
 
   @override
@@ -348,14 +370,32 @@ class _SignUpState extends State<SignUp> {
       showSnackBar("Please fill all the fields");
       return;
     }
-    
-    
-
-    
 
     setState(() {
       isLoading=true;
     });
+
+    GeoFirePoint geoPoint;
+    final response = await http.get('https://www.zipcodeapi.com/rest/WJ2jyOE36BNEtlgY6Tr2bQNMskcg87eB7c5V9nNZfjGWQnNWbgmyjJBeKC7rlQfN/info.json/${_locationController.text}/degrees');
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    var result = jsonDecode(response.body);
+    var lat = result['lat'];
+    var long = result['lng'];
+    geoPoint = Geoflutterfire().point(latitude: lat, longitude: long);
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    showSnackBar("Invalid zipCode");
+    return;
+  }
+    
+    
+
+    
+
+
 
     try {
       await _auth.createUserWithEmailAndPassword(
@@ -366,7 +406,8 @@ class _SignUpState extends State<SignUp> {
           email: _emailController.text, 
           name: _nameController.text, 
           zipCode: _locationController.text,
-          contact: _contactController.text
+          contact: _contactController.text,
+          geoPoint: geoPoint
           );
         Navigator.of(context).push(
           Platform.isAndroid ?

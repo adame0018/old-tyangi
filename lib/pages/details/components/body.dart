@@ -123,7 +123,7 @@ class UserDetails extends StatelessWidget {
                   Row(
                         children: [
                           Text(
-                            "3.0",
+                            user.avgRating.toString(),
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,

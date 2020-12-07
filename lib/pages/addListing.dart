@@ -54,7 +54,7 @@ class _AddListingState extends State<AddListing> {
 
     try {
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
+        maxImages: 8,
       );
     } on Exception catch (e) {
       error = e.toString();
@@ -267,7 +267,10 @@ class _AddListingState extends State<AddListing> {
         setState(() {
           isLoading=false;
         });
-        showSnackBar("Listing posted");
+        if(mounted){
+          showSnackBar("Listing posted");
+        }
+        Navigator.of(context).pop();
       } catch(e){
         showSnackBar("an error occured");
         setState(() {

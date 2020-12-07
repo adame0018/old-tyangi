@@ -20,7 +20,7 @@ class ListingCard extends StatefulWidget {
   final double width, aspectRatioCard, aspectRatioImage, fontSizeMultiple;
   final Listing listing;
   final String pageTag;
-  static const List<String> menuChoices = ["Mark as Sold", "Renew", "Promote"];
+  static const List<String> menuChoices = ["Mark as Sold", "Renew"];
   final bool showMenu;
 
   @override

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import '../details/details_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:csv/csv.dart';
@@ -45,13 +46,21 @@ class _HomeState extends State<Home> {
     //print(csvTable);
   }
 
+  postGeopoints() async {
+    GeoFirePoint point = Geoflutterfire().point(latitude: 33.592585, longitude: -86.95969);
+    await FirebaseFirestore.instance.collection('Listings').doc('QX1Iq27RE3D6RX1WThEe').update({
+      'position': point.data
+    });
+    print("updated");
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _pages = <Widget>[
       homePage,
-      ProfilePage(uid: FirebaseAuth.instance.currentUser.uid,),
+      ProfilePage(uid: FirebaseAuth.instance.currentUser.uid, fromHome: true,),
       // Center(
       //   child: Text(
       //     'Index 1: Business',
@@ -69,11 +78,9 @@ class _HomeState extends State<Home> {
       //   ],
       // )
       Center(
-        child: FlatButton(
-          onPressed: getZipCodes, 
-          child: Text("test")
-        )
+        child: Text("Messages")
       ),
+      Center(child: Text("settings"),)
     ];
     _pageController = PageController();
     user = FirebaseAuth.instance.currentUser;

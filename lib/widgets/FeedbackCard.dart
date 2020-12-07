@@ -1,3 +1,4 @@
+import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,10 +28,13 @@ class FeedbackCard extends StatelessWidget {
     var day = timeStamp.toDate().day;
     var month = timeStamp.toDate().month;
     var year = timeStamp.toDate().year;
-    return FutureBuilder(
+    return FutureBuilder<AppUser>(
       future: getUserFromId(uid),
       builder: (context, snapshot) {
+        
         if(snapshot.connectionState == ConnectionState.done && snapshot.hasData){
+          print("name: ");
+        print(snapshot.data.uid);
         return Card(
               shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)
@@ -51,13 +55,14 @@ class FeedbackCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                image: CachedNetworkImageProvider(snapshot.data.profilePic),
+                                image: CachedNetworkImageProvider(snapshot.data.profilePic==null ? "https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4" : 
+                                snapshot.data.profilePic),
                                 fit: BoxFit.cover
                               ),
                             )
                           ),
                           SizedBox(width: 5,),
-                          Text(snapshot.data.name),
+                          Text(snapshot.data.name??"test"),
                         ],
                       ),
                       RatingBarIndicator(

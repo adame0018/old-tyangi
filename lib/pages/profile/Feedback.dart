@@ -108,21 +108,27 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     onSubmit: 
                       (){
                         if(_commentController.text.isEmpty || rating == 0){
-                          widget.scaffoldKey.currentState.showSnackBar(
-                            SnackBar(content: Text("Please enter a star rating and comment both"),)
+                          // widget.scaffoldKey.currentState.showSnackBar(
+                          //   SnackBar(content: Text("Please enter a star rating and comment both"), duration: Duration(seconds: 2),)
+                          // );
+                          showDialog(context: context, builder: (_) => 
+                            AlertDialog(
+                              title: Text("Error"),
+                              content: Text("Enter both rating and comment"))
                           );
                           return;
                         }
                         print("submitting rating");
                         print(rating);
-                        setState(() {
-                          isLoading = true;
-                        });
+                        // setState(() {
+                        //   isLoading = true;
+                        // });
                         Rating newRating = Rating.fromUserInput(rating: rating, comment: _commentController.text, uid: FirebaseAuth.instance.currentUser.uid);
                         addRating(uid: widget.uid, rating: newRating);
-                        setState(() {
-                          isLoading = false;
-                        });
+                        // setState(() {
+                        //   // isLoading = false;
+                        //   canReview = false;
+                        // });
                         Navigator.of(context).pop();
                       },
                     context: context
@@ -199,9 +205,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         }
+        else{
+      
         return Expanded(
           // height: 100,
-          child: ListView(
+          child: snapshot.data.isEmpty ? Center(child: Text("No Feedback found")) : 
+          ListView(
             children: [
               canReview ? OutlinedButton(
                 onPressed: (){
@@ -215,7 +224,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 // color: Theme.of(context).primaryColor,
               ) : SizedBox(),
 
-              ...snapshot.data.map(
+              ...snapshot.data.reversed.map(
                 (feedback) {
                   return FeedbackCard(uid: feedback.uid, comment: feedback.comment, timeStamp: feedback.timestamp, rating: feedback.rating,);
                 }
@@ -228,6 +237,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
             ]
           ),
         );
+        }
       }
     );
   }

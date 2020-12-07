@@ -1,3 +1,4 @@
+import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/pages/home/components/categories.dart';
 import 'package:Tyangi/pages/home/components/featuredListings.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
@@ -5,17 +6,21 @@ import 'package:Tyangi/widgets/InfiniteGridView.dart';
 import 'package:Tyangi/widgets/sliders/premiumSlider.dart';
 import 'package:Tyangi/widgets/sliders/servicesSlider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../utitlities/firebase.dart';
 import 'package:flutter/material.dart';
 import '../../../models/Listing.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class Body extends StatefulWidget {
   Body({
     @required this.categories,
-    @required this.featuredListings
+    @required this.featuredListings,
+    @required this.radius
   });
   final List<String> categories;
   final List<Listing> featuredListings;
+  final double radius;
 
   @override
   _BodyState createState() => _BodyState();
@@ -28,16 +33,20 @@ class _BodyState extends State<Body> {
 
   bool isLoading = false;
   var _lastListing;
+  AppUser user;
+  Stream stream;
+
 
   Future<void> addItemIntoLisT() async {
     // for (int i = (pageCount * 10) - 10; i < pageCount * 10; i++) {
     //   dataList.add(i);
     //   isLoading = false;
     // }
-    var temp = await getListings();
-    setState(() {
-      dataList.addAll(temp);
-    });
+    
+    // var temp = await getListings();
+    // setState(() {
+    //   dataList.addAll(temp);
+    // });
     // QuerySnapshot snap;
     // if(_lastListing == null){
     //   snap = await FirebaseFirestore.instance.collection('Listings').limit(10).get();
@@ -92,19 +101,43 @@ class _BodyState extends State<Body> {
 
           // pageCount = pageCount + 1;
 
-          addItemIntoLisT();
+          // addItemIntoLisT();
         }
       });
     }
   }
 
+  loadUser()async{
+    var temp = await getUserFromId(FirebaseAuth.instance.currentUser.uid);
+    setState(() {
+      user = temp;
+    });
+    print("USer");
+   print(user.position);
+   print(user.position['geopoint'].latitude);
+       CollectionReference collectionRef = FirebaseFirestore.instance.collection('Listings');
+
+   GeoFirePoint center = Geoflutterfire().point(latitude: user.position['geopoint'].latitude, longitude: user.position['geopoint'].longitude);
+   setState(() {
+     
+    stream = Geoflutterfire().collection(collectionRef: collectionRef).within(center: center, radius: widget.radius, field: 'position',);
+   });
+  }
+
   @override
   void initState() {
     super.initState();
+   loadUser();
+   
 
+    // CollectionReference collectionRef = FirebaseFirestore.instance.collection('Listings');
+    // print(user.position.geopoint.latitude);
+    // GeoFirePoint center = Geoflutterfire().point(latitude: user.position.geopoint.latitude, longitude: user.position.geopoint.longitude);
+    // stream = Geoflutterfire().collection(collectionRef: collectionRef).within(center: center, radius: 10000, field: 'position',);
     ////LOADING FIRST  DATA
-    addItemIntoLisT();
-
+    // addItemIntoLisT();
+    // print(user.position);
+    // var point = Geoflutterfire().point(latitude: null, longitude: null)
     scrollController = new ScrollController(initialScrollOffset: 5.0);
     scrollController.addListener(_scrollListener);
   }
@@ -124,11 +157,11 @@ class _BodyState extends State<Body> {
             SizedBox(
               height:25,
             ),
-            FeaturedListings(listings: widget.featuredListings, title: "Featured"),
+            ServicesSlider(title: "Services"),
             SizedBox(
               height:25,
             ),
-            ServicesSlider(title: "Services")
+            FeaturedListings(listings: widget.featuredListings, title: "Featured"),
             // FeaturedListings(listings: widget.featuredListings, title: "Popular",),
             // SizedBox(
             //   height:25,
@@ -138,23 +171,42 @@ class _BodyState extends State<Body> {
             //   height:25,
             // ),
             // // InfiniteGridView(),
-            // GridView.count(
-            //         // controller: scrollController,
-            //         scrollDirection: Axis.vertical,
-            //         crossAxisCount: 4,
-            //         mainAxisSpacing: 10.0,
-            //         shrinkWrap: true,
-            //         physics: BouncingScrollPhysics(),
-            //         childAspectRatio: 0.7,
-            //         // physics: const AlwaysScrollableScrollPhysics(),
-            //         children: [
-            //           ...dataList.map((value) {
-            //             return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8,);
+            SizedBox(
+              height:25,
+            ),
+            StreamBuilder<List<DocumentSnapshot>>(
+              stream: stream,
+              builder: (context, snapshot) {
+                print("snapshit");
+                print(snapshot.hasData);
+                if(snapshot.hasData){
 
-            //         }).toList(),
-                    
-            //         ]
-            //       )
+                return GridView.count(
+                        // controller: scrollController,
+                        scrollDirection: Axis.vertical,
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 10.0,
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        childAspectRatio: 0.7,
+                        // physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          ...snapshot.data.map(
+                            (e) => ProductCard(pageTag: "gridview", listing: Listing.fromJson(e.data()), aspectRatioImage: 0.97,fontSizeMultiple: 0.8)
+                          ).toList()
+                        //   ...dataList.map((value) {
+                        //     return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8,);
+
+                        // }).toList(),
+                        
+                        ]
+                      );
+                }
+                else {
+                  return CircularProgressIndicator();
+                }
+              }
+            )
           ],
         ),
       ),

@@ -17,7 +17,7 @@ class Rating {
         rating = snapshot.data()['rating'].toDouble(),
         comment = snapshot.data()['comment'],
         // userName = snapshot.data()['userName'],
-        uid = snapshot.data()['uid'],
+        uid = snapshot.data()['userId'],
         timestamp = snapshot.data()['timestamp'],
         reference = snapshot.reference;
 

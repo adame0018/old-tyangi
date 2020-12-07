@@ -52,11 +52,12 @@ class _TopSliderState extends State<TopSlider> {
                       aspectRatio: 4,
                       child: Container(
                         decoration: BoxDecoration(
+                          border: Border.all(width: 0.5, color: Colors.grey),
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             image: CachedNetworkImageProvider(
                               //"https://loremflickr.com/640/360"
-                              widget.user.profilePic
+                              widget.user.profilePic??"https://loremflickr.com/640/360"
                             ),
                             fit: BoxFit.contain
                           )
@@ -89,7 +90,7 @@ class _TopSliderState extends State<TopSlider> {
                       children: [
                         Text("Listings:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
                         SizedBox(width: 5,),
-                        Text("12"),
+                        Text(""),
                       ],
                     ),
                     SizedBox(

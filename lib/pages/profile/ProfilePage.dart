@@ -8,11 +8,14 @@ import 'package:Tyangi/widgets/ListingCard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({@required this.uid});
+  ProfilePage({@required this.uid,
+    this.fromHome = false
+  });
   final String uid;
+  final bool fromHome;
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -26,14 +29,21 @@ with TickerProviderStateMixin{
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   loadListings()async {
-    var temp = await getListings();
-    setState(() {
+    var snap = await FirebaseFirestore.instance.collection('Listings')
+        .where('uid', isEqualTo: widget.fromHome ? 
+            FirebaseAuth.instance.currentUser.uid : widget.uid).get();
+    snap.docs.forEach((doc) {
+      setState(() {
+        listings.add(Listing.fromJson(doc.data()));
+      });
+     });
+    // setState(() {
       
-      listings.addAll(temp);
-    });
+    //   listings.addAll(temp);
+    // });
   }
   loadUser() async {
-    var temp = await getUserFromId(widget.uid);
+    var temp = await getUserFromId(widget.fromHome ? FirebaseAuth.instance.currentUser.uid : widget.uid);
     setState(() {
       user = temp;
     });
@@ -52,68 +62,80 @@ with TickerProviderStateMixin{
   Widget build(BuildContext context) {
     var _height = MediaQuery.of(context).size.height;
     var _width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: CupertinoNavigationBar(
-        middle: Text("Profile")
-      ),
+    return FutureBuilder<AppUser>(
+      future: getUserFromId(widget.fromHome ? FirebaseAuth.instance.currentUser.uid : widget.uid),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.done && snapshot.hasData){
 
-      body: user == null ? Center(child: CircularProgressIndicator()) : 
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Container(
-              width: _width,
-              height: _height/4,
-              child: TopSlider(user: user,)
-            ),
-            Expanded(
-                          child: Column(
-                children: [
-                  Container(
-                    height: 50,
-                    child: TabBar(
-                      controller: _tabController,
-                      tabs: [
-                        Tab(child: Text("Listings", style: TextStyle(color: Colors.blue),),),
-                        Tab(child: Text("Feedback", style: TextStyle(color: Colors.blue),))
-                      ]
-                    ),
-                  ),
-                  Expanded(
-                    // height: _height-50 - (_height/3.5),
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        GridView.count(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          //itemCount: listings.length,
-                          scrollDirection: Axis.vertical,
-                          // // itemBuilder: (context, index){
-                          //   return ProductCard(listing: listings[index]);
-                          // }
-                          children: [
-                            ...listings.map((value) {
-                                return ListingCard(listing: value, pageTag: "Profile", showMenu: value.uid == currentUser.uid);
-                            }).toList(),
-                          ],
+        return Scaffold(
+          key: _scaffoldKey,
+          appBar: CupertinoNavigationBar(
+            middle: Text("Profile")
+          ),
+
+          body: user == null ? Center(child: CircularProgressIndicator()) : 
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Container(
+                  width: _width,
+                  height: _height/4,
+                  child: TopSlider(user: snapshot.data,)
+                ),
+                Expanded(
+                              child: Column(
+                    children: [
+                      Container(
+                        height: 50,
+                        child: TabBar(
+                          controller: _tabController,
+                          tabs: [
+                            Tab(child: Text("Listings", style: TextStyle(color: Colors.blue),),),
+                            Tab(child: Text("Feedback", style: TextStyle(color: Colors.blue),))
+                          ]
                         ),
-                        Flex(
-                          direction: Axis.vertical,
-                          children: [FeedbackPage(uid: widget.uid, scaffoldKey: _scaffoldKey,)]
-                          )
-                      ]
-                    ),
+                      ),
+                      Expanded(
+                        // height: _height-50 - (_height/3.5),
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            listings.isEmpty ? Center(child: Text("No listings found")) : GridView.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              //itemCount: listings.length,
+                              scrollDirection: Axis.vertical,
+                              // // itemBuilder: (context, index){
+                              //   return ProductCard(listing: listings[index]);
+                              // }
+                              children: [
+                                
+                                ...listings.map((value) {
+                                    return ListingCard(listing: value, pageTag: "Profile", showMenu: value.uid == currentUser.uid);
+                                }).toList(),
+                              ],
+                            ),
+                            Flex(
+                              direction: Axis.vertical,
+                              children: [FeedbackPage(uid: widget.fromHome ? FirebaseAuth.instance.currentUser.uid : widget.uid, scaffoldKey: _scaffoldKey,)]
+                              )
+                          ]
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
-          ]
-        ),
-      )
+                )
+              ]
+            ),
+          )
+        );
+        }
+        else{
+          return Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+      }
     );
   }
 }

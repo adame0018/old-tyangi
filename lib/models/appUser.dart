@@ -4,6 +4,7 @@ class AppUser{
   String uid, email, name, profilePic, zipCode, contact;
   int numRatings;
   double avgRating;
+  dynamic position;
 
   AppUser({
     @required this.uid,
@@ -12,6 +13,7 @@ class AppUser{
     @required this.profilePic,
     @required this.zipCode,
     @required this.contact,
+    @required this.position,
     this.avgRating = 0,
     this.numRatings = 0,
   });
@@ -28,6 +30,7 @@ class AppUser{
     profilePic = map['profilePic'];
     numRatings = map['numRatings'];
     avgRating = map['avgRating'].toDouble();
+    position = map['position'];
   }
 
   toJson(){
@@ -40,7 +43,8 @@ class AppUser{
       'zipCode': zipCode,
       'profilePic': profilePic,
       'numRatings': numRatings,
-      'avgRating': avgRating
+      'avgRating': avgRating,
+      'position': position
     };
   }
 }
