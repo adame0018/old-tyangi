@@ -157,11 +157,11 @@ class _BodyState extends State<Body> {
             SizedBox(
               height:25,
             ),
-            ServicesSlider(title: "Services"),
+            // ServicesSlider(title: "Services"),
             SizedBox(
               height:25,
             ),
-            FeaturedListings(listings: widget.featuredListings, title: "Featured"),
+            // FeaturedListings(listings: widget.featuredListings, title: "Featured"),
             // FeaturedListings(listings: widget.featuredListings, title: "Popular",),
             // SizedBox(
             //   height:25,
@@ -174,39 +174,39 @@ class _BodyState extends State<Body> {
             SizedBox(
               height:25,
             ),
-            StreamBuilder<List<DocumentSnapshot>>(
-              stream: stream,
-              builder: (context, snapshot) {
-                print("snapshit");
-                print(snapshot.hasData);
-                if(snapshot.hasData){
+            // StreamBuilder<List<DocumentSnapshot>>(
+            //   stream: stream,
+            //   builder: (context, snapshot) {
+            //     print("snapshit");
+            //     print(snapshot.hasData);
+            //     if(snapshot.hasData){
 
-                return GridView.count(
-                        // controller: scrollController,
-                        scrollDirection: Axis.vertical,
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 10.0,
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        childAspectRatio: 0.7,
-                        // physics: const AlwaysScrollableScrollPhysics(),
-                        children: [
-                          ...snapshot.data.map(
-                            (e) => ProductCard(pageTag: "gridview", listing: Listing.fromJson(e.data()), aspectRatioImage: 0.97,fontSizeMultiple: 0.8)
-                          ).toList()
-                        //   ...dataList.map((value) {
-                        //     return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8,);
+            //     return GridView.count(
+            //             // controller: scrollController,
+            //             scrollDirection: Axis.vertical,
+            //             crossAxisCount: 4,
+            //             mainAxisSpacing: 10.0,
+            //             shrinkWrap: true,
+            //             physics: BouncingScrollPhysics(),
+            //             childAspectRatio: 0.7,
+            //             // physics: const AlwaysScrollableScrollPhysics(),
+            //             children: [
+            //               ...snapshot.data.map(
+            //                 (e) => ProductCard(pageTag: "gridview", listing: Listing.fromJson(e.data()), aspectRatioImage: 0.97,fontSizeMultiple: 0.8)
+            //               ).toList()
+            //             //   ...dataList.map((value) {
+            //             //     return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8,);
 
-                        // }).toList(),
+            //             // }).toList(),
                         
-                        ]
-                      );
-                }
-                else {
-                  return CircularProgressIndicator();
-                }
-              }
-            )
+            //             ]
+            //           );
+            //     }
+            //     else {
+            //       return CircularProgressIndicator();
+            //     }
+            //   }
+            // )
           ],
         ),
       ),

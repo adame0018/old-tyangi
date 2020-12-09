@@ -81,19 +81,16 @@ class _FeaturedCardState extends State<FeaturedCard> {
                 right: 0,
                 child: AspectRatio(
                         aspectRatio: 1,
-                        child: Hero(
-                          tag: widget.pageTag,
-                          child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-                                // color: Colors.grey.withOpacity(0.5),
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider("https://lh3.googleusercontent.com/-V18gxy3x8Wg/X8kSSh5TpcI/AAAAAAAAACI/8Yc6o_t6iQUmnO_ZsAKWdZ_Y-mcm5FnWgCK8BGAsYHg/s0/2020-12-03.png"),
-                                  fit: BoxFit.contain
-                                )
-                              ),
+                        child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                              // color: Colors.grey.withOpacity(0.5),
+                              image: DecorationImage(
+                                image: CachedNetworkImageProvider("https://lh3.googleusercontent.com/-V18gxy3x8Wg/X8kSSh5TpcI/AAAAAAAAACI/8Yc6o_t6iQUmnO_ZsAKWdZ_Y-mcm5FnWgCK8BGAsYHg/s0/2020-12-03.png"),
+                                fit: BoxFit.contain
+                              )
                             ),
-                  ),
+                          ),
                 ),
                 
               ),

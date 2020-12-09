@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Tyangi/pages/addListing.dart';
+import 'package:Tyangi/pages/chat/chatList.dart';
 import 'package:Tyangi/pages/profile/ProfilePage.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
@@ -60,13 +61,14 @@ class _HomeState extends State<Home> {
     super.initState();
     _pages = <Widget>[
       homePage,
-      ProfilePage(uid: FirebaseAuth.instance.currentUser.uid, fromHome: true,),
-      // Center(
-      //   child: Text(
-      //     'Index 1: Business',
-      //     style: optionStyle,
-      //   ),
-      // ),
+
+      // ProfilePage(uid: FirebaseAuth.instance.currentUser.uid, fromHome: true,),
+      Center(
+        child: Text(
+          'Index 1: Business',
+          style: optionStyle,
+        ),
+      ),
       // DetailsScreen(),
       // GridView.count(
       //   crossAxisCount: 2,
@@ -77,9 +79,10 @@ class _HomeState extends State<Home> {
       //     ListingCard(),
       //   ],
       // )
-      Center(
-        child: Text("Messages")
-      ),
+      // Center(
+      //   child: Text("Messages")
+      // ),
+      ChatList(),
       Center(child: Text("settings"),)
     ];
     _pageController = PageController();

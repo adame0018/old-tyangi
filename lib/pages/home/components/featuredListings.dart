@@ -32,7 +32,7 @@ class FeaturedListings extends StatelessWidget {
               itemCount: listings.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index){
-                return ListingCard(listing: listings[index], pageTag: "Home",);
+                return ListingCard(listing: listings[index], pageTag: "FeaturedListings",);
               },
               // children: [
               //       ProductCard(),

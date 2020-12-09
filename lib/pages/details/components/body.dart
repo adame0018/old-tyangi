@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:Tyangi/models/appUser.dart';
+import 'package:Tyangi/pages/chat/chat.dart';
 import 'package:Tyangi/pages/profile/ProfilePage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:shop_app/components/default_button.dart';
@@ -17,7 +19,7 @@ import '../../../models/Listing.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../utitlities/firebase.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   // final Product product;
   const Body({Key key,
    @required this.listing,
@@ -27,30 +29,89 @@ class Body extends StatelessWidget {
   final String pageTag;
 
   @override
+  _BodyState createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  bool _isLoading = false;
+
+  openChat({String peerId, BuildContext context}) async{
+    String currentUser =  FirebaseAuth.instance.currentUser.uid;
+    var chat = await FirebaseFirestore.instance.collection('Users/$currentUser/Chats').doc(peerId).get();
+    if(chat.exists){
+      print("it exists");
+      var peerUser = await getUserFromId(peerId);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+        builder: (_) => Chat(
+          peerId: peerId, 
+          peerAvatar: peerUser.profilePic, 
+          groupChatId: chat.data()['chatRoom']
+          )
+        )
+      );
+    }else {
+      setState(() {
+        _isLoading = true;
+      });
+      var chatRoom = FirebaseFirestore.instance.collection('ChatRooms').doc();
+      await chatRoom.set({
+        'id': chatRoom.id,
+        'users': [currentUser, peerId],
+      });
+      await FirebaseFirestore.instance.collection('ChatRooms/${chatRoom.id}/Messages').doc('empty').set({
+        'content': ''
+      });
+      await FirebaseFirestore.instance.collection('Users/$currentUser/Chats').doc(peerId).set({
+        'chatRoom': chatRoom.id
+      });
+      await FirebaseFirestore.instance.collection('Users/$peerId/Chats').doc(currentUser).set({
+        'chatRoom': chatRoom.id
+      });
+      var peerUser = await getUserFromId(peerId);
+      if(mounted){
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      Navigator.of(context).push(
+        MaterialPageRoute(
+        builder: (_) => Chat(
+          peerId: peerId, 
+          peerAvatar: peerUser.profilePic, 
+          groupChatId: chatRoom.id
+          )
+        )
+      );
+    }
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     var _height = MediaQuery.of(context).size.height;
     var _width = MediaQuery.of(context).size.width;
     return Column(
       children: [
         // SizedBox(height: 20),
-        ProductImages(listing: listing,pageTag: pageTag,),
+        ProductImages(listing: widget.listing,pageTag: widget.pageTag,),
         TopRoundedContainer(
           color: Colors.white,
           child: Column(
             children: [
               ProductDescription(
-                listing: listing,
+                listing: widget.listing,
                 pressOnSeeMore: () {},
               ),
               // SizedBox(height: 10,),
-              
+              widget.listing.uid != FirebaseAuth.instance.currentUser.uid ?
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 60),
-                child: submitButton(context: context, hint: "Chat", onSubmit: () {
-                  
+                child: submitButton(context: context, hint: "Chat", isLoading: _isLoading,onSubmit: () async{
+                  await openChat(peerId: widget.listing.uid, context: context);
                 },),
-              ),
-              UserDetails(listing: listing,),
+              ) : SizedBox(height: _height/8,),
+              UserDetails(listing: widget.listing,),
               SizedBox(height: 10)
             ],
           ),
@@ -123,7 +184,7 @@ class UserDetails extends StatelessWidget {
                   Row(
                         children: [
                           Text(
-                            user.avgRating.toString(),
+                            user.avgRating.toStringAsFixed(1),
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
