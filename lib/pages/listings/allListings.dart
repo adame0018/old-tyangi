@@ -10,16 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ListingsBySubCategory extends StatefulWidget {
-  final String subCategory;
-  ListingsBySubCategory({
-    @required this.subCategory
-  });
+class AllListings extends StatefulWidget {
   @override
-  _ListingsBySubCategoryState createState() => _ListingsBySubCategoryState();
+  _AllListingsState createState() => _AllListingsState();
 }
 
-class _ListingsBySubCategoryState extends State<ListingsBySubCategory> {
+class _AllListingsState extends State<AllListings> {
   List dataList = new List<Listing>();
   bool isLoading = false;
   int pageCount = 1;
@@ -45,7 +41,7 @@ class _ListingsBySubCategoryState extends State<ListingsBySubCategory> {
     setState(() {
       user = temp;
     });
-       var collectionRef = FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: widget.subCategory);
+       var collectionRef = FirebaseFirestore.instance.collection('Listings');
        SharedPreferences prefs = await SharedPreferences.getInstance();
       double radius = prefs.getDouble('radius') ?? 50*1.6;
       GeoFirePoint center = Geoflutterfire().point(latitude: user.position['geopoint'].latitude, longitude: user.position['geopoint'].longitude);
@@ -55,55 +51,55 @@ class _ListingsBySubCategoryState extends State<ListingsBySubCategory> {
       });
   }
 
-  Future<void> addItemIntoLisT() async {
-    // for (int i = (pageCount * 10) - 10; i < pageCount * 10; i++) {
-    //   dataList.add(i);
-    //   isLoading = false;
-    // }
-    // var temp = await getListings();
-    // setState(() {
-    //   dataList.addAll(temp);
-    // });
-    QuerySnapshot snap;
-    if(_lastListing == null){
-      snap = await FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: widget.subCategory).orderBy('createdAt').limit(24).get();
+  // Future<void> addItemIntoLisT() async {
+  //   // for (int i = (pageCount * 10) - 10; i < pageCount * 10; i++) {
+  //   //   dataList.add(i);
+  //   //   isLoading = false;
+  //   // }
+  //   // var temp = await getListings();
+  //   // setState(() {
+  //   //   dataList.addAll(temp);
+  //   // });
+  //   QuerySnapshot snap;
+  //   if(_lastListing == null){
+  //     snap = await FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: widget.subCategory).orderBy('createdAt').limit(24).get();
       
-      // setState(() {
-      //     snap.docs.forEach((doc) async {
-      //       dataList.add(new Listing.fromJson(doc.data()));
-      //     });
-      //     // _lastListing = snap.docs[snap.size - 1];
-      //   // dataList.addAll(temp);
-      // });
-    }
-    else {
-      snap = await FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: widget.subCategory).orderBy('createdAt').startAfterDocument(_lastListing).limit(16).get();
-      // setState(() {
+  //     // setState(() {
+  //     //     snap.docs.forEach((doc) async {
+  //     //       dataList.add(new Listing.fromJson(doc.data()));
+  //     //     });
+  //     //     // _lastListing = snap.docs[snap.size - 1];
+  //     //   // dataList.addAll(temp);
+  //     // });
+  //   }
+  //   else {
+  //     snap = await FirebaseFirestore.instance.collection('Listings').where('subCategory', isEqualTo: widget.subCategory).orderBy('createdAt').startAfterDocument(_lastListing).limit(16).get();
+  //     // setState(() {
           
-      //     // _lastListing = snap.docs[snap.size - 1];
-      //   // dataList.addAll(temp);
-      // });
-    }
+  //     //     // _lastListing = snap.docs[snap.size - 1];
+  //     //   // dataList.addAll(temp);
+  //     // });
+  //   }
 
-    if (snap != null && snap.size > 0) {
-      _lastListing = snap.docs[snap.size - 1];
-      if (mounted) {
-        setState(() {
-         snap.docs.forEach((doc) async {
-            dataList.add(new Listing.fromJson(doc.data()));
-          });
-          isLoading = false;
-        });
-      }
-    } else {
-      setState(() => isLoading = false);
-      // scaffoldKey.currentState?.showSnackBar(
-      //   SnackBar(
-      //     content: Text('No more posts!'),
-      //   ),
-      // );
-    }
-  }
+  //   if (snap != null && snap.size > 0) {
+  //     _lastListing = snap.docs[snap.size - 1];
+  //     if (mounted) {
+  //       setState(() {
+  //        snap.docs.forEach((doc) async {
+  //           dataList.add(new Listing.fromJson(doc.data()));
+  //         });
+  //         isLoading = false;
+  //       });
+  //     }
+  //   } else {
+  //     setState(() => isLoading = false);
+  //     // scaffoldKey.currentState?.showSnackBar(
+  //     //   SnackBar(
+  //     //     content: Text('No more posts!'),
+  //     //   ),
+  //     // );
+  //   }
+  // }
 
   
 
@@ -120,7 +116,7 @@ class _ListingsBySubCategoryState extends State<ListingsBySubCategory> {
 
           // pageCount = pageCount + 1;
 
-          addItemIntoLisT();
+          // addItemIntoLisT();
         }
       });
     }
@@ -138,7 +134,7 @@ class _ListingsBySubCategoryState extends State<ListingsBySubCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CupertinoNavigationBar(
-        middle: Text(widget.subCategory),
+        middle: Text("All Listings"),
       ),
       body: 
         StreamBuilder<List<DocumentSnapshot>>(

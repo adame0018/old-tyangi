@@ -1,12 +1,16 @@
 import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/pages/home/components/categories.dart';
 import 'package:Tyangi/pages/home/components/featuredListings.dart';
+import 'package:Tyangi/pages/listings/allListings.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
+import 'package:Tyangi/utitlities/sizeConfig.dart';
 import 'package:Tyangi/widgets/InfiniteGridView.dart';
 import 'package:Tyangi/widgets/sliders/premiumSlider.dart';
 import 'package:Tyangi/widgets/sliders/servicesSlider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utitlities/firebase.dart';
 import 'package:flutter/material.dart';
 import '../../../models/Listing.dart';
@@ -112,15 +116,16 @@ class _BodyState extends State<Body> {
     setState(() {
       user = temp;
     });
-    print("USer");
-   print(user.position);
-   print(user.position['geopoint'].latitude);
+  //   print("USer");
+  //  print(user.position);
+  //  print(user.position['geopoint'].latitude);
        CollectionReference collectionRef = FirebaseFirestore.instance.collection('Listings');
-
+       SharedPreferences prefs = await SharedPreferences.getInstance();
+      double radius = prefs.getDouble('radius') ?? 50*1.6;
    GeoFirePoint center = Geoflutterfire().point(latitude: user.position['geopoint'].latitude, longitude: user.position['geopoint'].longitude);
    setState(() {
      
-    stream = Geoflutterfire().collection(collectionRef: collectionRef).within(center: center, radius: widget.radius, field: 'position',);
+    stream = Geoflutterfire().collection(collectionRef: collectionRef).within(center: center, radius: radius, field: 'position',);
    });
   }
 
@@ -142,8 +147,45 @@ class _BodyState extends State<Body> {
     scrollController.addListener(_scrollListener);
   }
 
+  listingsGrid(){
+    return StreamBuilder<List<DocumentSnapshot>>(
+              stream: stream,
+              builder: (context, snapshot) {
+                print("snapshit");
+                print(snapshot.hasData);
+                if(snapshot.hasData){
+                return GridView.count(
+                        // controller: scrollController,
+                        scrollDirection: Axis.vertical,
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 10.0,
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        childAspectRatio: 0.7,
+                        // physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          ...snapshot.data.map(
+                            (e) => ProductCard(pageTag: "gridview", listing: Listing.fromJson(e.data()), aspectRatioImage: 0.97,fontSizeMultiple: 0.8)
+                          ).toList()
+                        //   ...dataList.map((value) {
+                        //     return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8,);
+
+                        // }).toList(),
+                        
+                        ]
+                      );
+                }
+                else {
+                  return CircularProgressIndicator();
+                }
+              }
+            );
+
+  }
+
   @override
   Widget build(BuildContext context) {
+    var _height = MediaQuery.of(context).size.height;
     return SafeArea(
       child: SingleChildScrollView(
         controller: scrollController,
@@ -151,17 +193,27 @@ class _BodyState extends State<Body> {
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
+            // Row(
+            //   children: [
+            //     CupertinoTextField(
+
+            //     )
+            //   ],
+            // ),
+            SizedBox(
+              height:10,
+            ),
             Categories(categories: widget.categories),
             PremiumSlider(title: "Premium"),
 
             SizedBox(
               height:25,
             ),
-            // ServicesSlider(title: "Services"),
+            ServicesSlider(title: "Services"),
             SizedBox(
               height:25,
             ),
-            // FeaturedListings(listings: widget.featuredListings, title: "Featured"),
+            FeaturedListings(listings: widget.featuredListings, title: "Featured"),
             // FeaturedListings(listings: widget.featuredListings, title: "Popular",),
             // SizedBox(
             //   height:25,
@@ -171,16 +223,36 @@ class _BodyState extends State<Body> {
             //   height:25,
             // ),
             // // InfiniteGridView(),
-            SizedBox(
-              height:25,
+            SizedBox(height:25,),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(10)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("All Listings", style: TextStyle(fontSize: _height/40, fontWeight: FontWeight.w700 ),),
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => AllListings())
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Text("View All", style: TextStyle(color: Colors.blue[400]),),
+                        Icon(Icons.arrow_forward_ios, size: 12, color: Colors.blue[400],)
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
+            listingsGrid()
             // StreamBuilder<List<DocumentSnapshot>>(
             //   stream: stream,
             //   builder: (context, snapshot) {
             //     print("snapshit");
             //     print(snapshot.hasData);
             //     if(snapshot.hasData){
-
             //     return GridView.count(
             //             // controller: scrollController,
             //             scrollDirection: Axis.vertical,
@@ -212,6 +284,7 @@ class _BodyState extends State<Body> {
       ),
     );
   }
+
 }
 
 

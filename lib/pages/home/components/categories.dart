@@ -35,7 +35,8 @@ class Categories extends StatelessWidget {
             categories.length,
             (index) {
               
-              return Container(
+              return AspectRatio(
+                aspectRatio: 0.84,
               // margin: EdgeInsets.symmetric(horizontal: 5),
               child: CategoryCard(
                 icon: categories[index],
@@ -98,7 +99,11 @@ class CategoryCard extends StatelessWidget {
             ),
             SizedBox(height: 5),
             Flexible(
-                child: Text(text, textAlign: TextAlign.center,
+                child: Text(text, 
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: _height/60
+                  ),
                 // overflow: TextOverflow.ellipsis
               ),
             )

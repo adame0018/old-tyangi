@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/models/rating.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import '../models/Listing.dart';
+import 'package:http/http.dart' as http;
 
 Future<void> setupUser({String name, String email, String contact, String zipCode, GeoFirePoint geoPoint}) async {
   String uid = FirebaseAuth.instance.currentUser.uid.toString();
@@ -46,11 +49,38 @@ Future<GeoFirePoint>getUserGeoPoint(String uid)async{
   return geoPoint;
 }
 
-Future<String> postListing({String title, String description, String price, bool autoRepost, String category, String subCategory, DateTime autoRepostAt}) async {
+String getZipCodeAPIKey() {
+  return 'CykCSSAevR7sVckyegrSwJAZI3oTDavz';
+}
+
+Future<GeoFirePoint> getGeoPointFromZip(String zipCode) async{
+  GeoFirePoint geoPoint;
+  final response = await http.get('http://open.mapquestapi.com/geocoding/v1/address?key=${getZipCodeAPIKey()}&postalCode=$zipCode&maxResults=1&thumbMaps=false');
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    var result = jsonDecode(response.body);
+    var latLong = result['results'][0]['locations'][0]['latLng'];
+    var lat = latLong['lat'];
+    var long = latLong['lng'];
+    geoPoint = Geoflutterfire().point(latitude: lat, longitude: long);
+  } else {
+    print("Error fetching LatLong of ZipCode");
+    geoPoint = Geoflutterfire().point(latitude: 39.78373, longitude: -100.445882);
+  }
+
+  return geoPoint;
+    
+  }
+
+Future<String> postListing({String title, String description, String price, bool autoRepost, 
+      String category, String subCategory, DateTime autoRepostAt,
+      String zipCode
+      }) async {
   
     String uid  = FirebaseAuth.instance.currentUser.uid;
     var zipCode = await getUserZipCode();
-    var geoPoint = await getUserGeoPoint(uid);
+    var geoPoint = await getGeoPointFromZip(zipCode);
     CollectionReference reference = FirebaseFirestore.instance.collection('Listings');
     var docRef = autoRepost ? await reference.add({
       'uid': uid,

@@ -69,23 +69,7 @@ class _SignUpState extends State<SignUp> {
     super.initState();
   }
 
-  Future<GeoFirePoint> getGeoPoint(String zipCode) async{
-    final response = await http.get('https://www.zipcodeapi.com/rest/WJ2jyOE36BNEtlgY6Tr2bQNMskcg87eB7c5V9nNZfjGWQnNWbgmyjJBeKC7rlQfN/info.json/$zipCode/degrees');
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    var result = jsonDecode(response.body);
-    var lat = result['lat'];
-    var long = result['lng'];
-    GeoFirePoint geopoint = Geoflutterfire().point(latitude: lat, longitude: long);
-    return geopoint;
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    showSnackBar("An error occured with zipCode");
-  }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -376,13 +360,14 @@ class _SignUpState extends State<SignUp> {
     });
 
     GeoFirePoint geoPoint;
-    final response = await http.get('https://www.zipcodeapi.com/rest/WJ2jyOE36BNEtlgY6Tr2bQNMskcg87eB7c5V9nNZfjGWQnNWbgmyjJBeKC7rlQfN/info.json/${_locationController.text}/degrees');
+    final response = await http.get('http://open.mapquestapi.com/geocoding/v1/address?key=CykCSSAevR7sVckyegrSwJAZI3oTDavz&postalCode=${_locationController.text}&maxResults=1&thumbMaps=false');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     var result = jsonDecode(response.body);
-    var lat = result['lat'];
-    var long = result['lng'];
+    var latLong = result['results'][0]['locations'][0]['latLng'];
+    var lat = latLong['lat'];
+    var long = latLong['lng'];
     geoPoint = Geoflutterfire().point(latitude: lat, longitude: long);
   } else {
     // If the server did not return a 200 OK response,

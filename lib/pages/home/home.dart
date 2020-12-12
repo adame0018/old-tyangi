@@ -20,6 +20,7 @@ import '../details/details_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:csv/csv.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 
 class Home extends StatefulWidget {
@@ -55,6 +56,25 @@ class _HomeState extends State<Home> {
     print("updated");
   }
 
+  getLatLong() async{
+    final response = await http.get('http://open.mapquestapi.com/geocoding/v1/address?key=CykCSSAevR7sVckyegrSwJAZI3oTDavz&postalCode=1234&maxResults=1&thumbMaps=false');
+    if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    Map<String, dynamic> result = jsonDecode(response.body);
+    print(result['results'][0]['locations'][0]['latLng']['lat']);
+    // var lat = result['lat'];
+    // var long = result['lng'];
+    // geoPoint = Geoflutterfire().point(latitude: lat, longitude: long);
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    // showSnackBar("Invalid zipCode");
+    print("error");
+    return;
+  }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -64,9 +84,9 @@ class _HomeState extends State<Home> {
 
       // ProfilePage(uid: FirebaseAuth.instance.currentUser.uid, fromHome: true,),
       Center(
-        child: Text(
-          'Index 1: Business',
-          style: optionStyle,
+        child: OutlinedButton(
+          child: Text('get loc'),
+          onPressed: getLatLong,
         ),
       ),
       // DetailsScreen(),

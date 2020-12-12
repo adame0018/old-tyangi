@@ -27,9 +27,19 @@ class Chat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CupertinoNavigationBar(
-        middle: Text(
+      appBar: AppBar(
+        // heroTag: 'chat',
+        // transitionBetweenRoutes: true,
+        backgroundColor: Colors.white,
+        elevation: 2.0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: CupertinoColors.systemBlue,),
+          onPressed: Navigator.of(context).pop,
+        ),
+        title: Text(
           'CHAT',
+          style: Theme.of(context).textTheme.headline6,
         ),
       ),
       body: ChatScreen(

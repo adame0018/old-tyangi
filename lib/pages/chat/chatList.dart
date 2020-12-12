@@ -272,10 +272,15 @@ class ChatListState extends State<ChatList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CupertinoNavigationBar(
-        middle: Text(
+      appBar: AppBar(
+        // heroTag: 'chat',
+        // transitionBetweenRoutes: true,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        title: Text(
           'Chats',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.headline6,
         ),
         automaticallyImplyLeading: false,
         // actions: <Widget>[

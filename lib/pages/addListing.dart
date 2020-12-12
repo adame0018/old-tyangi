@@ -242,6 +242,7 @@ class _AddListingState extends State<AddListing> {
             autoRepost: autoRepost,
             category: category,
             subCategory: subCategory,
+            zipCode: _locationController.text,
             autoRepostAt: pickedDate.add(Duration(hours: time.hour, minutes: time.minute))
           );
         }else {
@@ -251,6 +252,7 @@ class _AddListingState extends State<AddListing> {
             autoRepost: autoRepost,
             category: category,
             subCategory: subCategory,
+            zipCode: _locationController.text
           );
         }
         print(listingId);
