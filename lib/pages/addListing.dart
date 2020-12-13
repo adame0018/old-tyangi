@@ -1,5 +1,7 @@
+import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/widgets/Inputs.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +17,7 @@ class AddListing extends StatefulWidget {
 
 class _AddListingState extends State<AddListing> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  AppUser user;
   String category;
   String subCategory;
   String condition;
@@ -217,6 +220,10 @@ class _AddListingState extends State<AddListing> {
   }
 
   void onSubmit() async {
+    if(autoRepost && user.repostTokens == 0){
+      showSnackBar("Not enough Repost Tokens!");
+      return;
+    }
     if(
       _titleController.text == null || _titleController.text.isEmpty ||
       _descriptionController.text == null || _descriptionController.text.isEmpty ||
@@ -336,15 +343,26 @@ class _AddListingState extends State<AddListing> {
     );
 }
 
+  loadCurrentUser() async{
+    getUserFromId(FirebaseAuth.instance.currentUser.uid).then(
+      (value){
+        setState(() {
+          user = value;
+        });
+      });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     loadCategories();
+    loadCurrentUser();
     images = List<Asset>();
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
     _priceController = TextEditingController();
     _locationController = TextEditingController();
+
     // pickedDate = DateTime.now();
     // time = TimeOfDay.now();
     super.initState();

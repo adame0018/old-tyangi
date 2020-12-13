@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:Tyangi/models/Listing.dart';
 import 'package:Tyangi/pages/addListing.dart';
 import 'package:Tyangi/pages/home/components/body.dart';
+import 'package:Tyangi/pages/listings/searchResults.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   double radius = 50*1.6;
   bool isSlider = false;
   double label = 50*1.6;
+  TextEditingController searchController;
   @override
   void initState() {
     // TODO: implement initState
@@ -32,6 +34,7 @@ class _HomePageState extends State<HomePage> {
     loadCategories();
     loadFeaturedListings();
     getRadius();
+    searchController = TextEditingController();
   }
 
   getRadius() async{
@@ -139,6 +142,11 @@ class _HomePageState extends State<HomePage> {
             }
           ), 
             secondChild: CupertinoTextField(
+              onSubmitted: (value){
+                Navigator.of(context).push(
+                  CupertinoPageRoute(builder: (_) => SearchResults(searchParam: searchController.text))
+                );
+              },
               padding: EdgeInsets.all(5),
               placeholder: "Search", 
               suffix: Padding(

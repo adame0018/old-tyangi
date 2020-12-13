@@ -20,7 +20,8 @@ Future<void> setupUser({String name, String email, String contact, String zipCod
     'profilePic': '',
     'avgRating': 0,
     'numRatings': 0,
-    'position': geoPoint.data
+    'position': geoPoint.data,
+    'repostTokens': 3
   });
   return;
 }

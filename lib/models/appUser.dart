@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppUser{
   String uid, email, name, profilePic, zipCode, contact;
-  int numRatings;
+  int numRatings, repostTokens;
   double avgRating;
   dynamic position;
 
@@ -14,6 +14,7 @@ class AppUser{
     @required this.zipCode,
     @required this.contact,
     @required this.position,
+    @required this.repostTokens,
     this.avgRating = 0,
     this.numRatings = 0,
   });
@@ -31,6 +32,7 @@ class AppUser{
     numRatings = map['numRatings'];
     avgRating = map['avgRating'].toDouble();
     position = map['position'];
+    repostTokens = map['repostTokens'];
   }
 
   toJson(){
@@ -44,7 +46,8 @@ class AppUser{
       'profilePic': profilePic,
       'numRatings': numRatings,
       'avgRating': avgRating,
-      'position': position
+      'position': position,
+      'repostTokens': repostTokens
     };
   }
 }
