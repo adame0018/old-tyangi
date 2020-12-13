@@ -173,7 +173,7 @@ class _SearchResultsState extends State<SearchResults> {
                           childAspectRatio: 0.7,
                           // physics: const AlwaysScrollableScrollPhysics(),
                           children: [
-                            ...snapshot.data.map((value) {
+                            ...results.map((value) {
                               return ListingCard(
                                 listing: Listing.fromJson(value.data()), 
                                 aspectRatioImage: 0.97,

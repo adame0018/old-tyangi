@@ -135,7 +135,7 @@ class UserDetails extends StatelessWidget {
         future: getUserFromId(listing.uid),
         builder: (context, snap)
         {
-          if(snap.connectionState == ConnectionState.done && snap.hasData){
+          if(snap.hasData){
             AppUser user = snap.data;
 
           return InkWell(
@@ -172,7 +172,7 @@ class UserDetails extends StatelessWidget {
                         shape: BoxShape.circle,
                         // border: Border.all(width: 0.5),
                         image: DecorationImage(
-                          image: CachedNetworkImageProvider(user.profilePic),
+                          image: CachedNetworkImageProvider(user.profilePic??"https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4"),
                           fit: BoxFit.cover
                         )
                       ),

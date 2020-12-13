@@ -36,14 +36,16 @@ class _FeedbackPageState extends State<FeedbackPage> {
       });
       return ;
     }
-    var snap = await FirebaseFirestore.instance.collection('Users/${widget.uid}/ratings').where('userId',isEqualTo: FirebaseAuth.instance.currentUser.uid).get();
-    if(snap.size > 0){
+    var snapReviews = await FirebaseFirestore.instance.collection('Users/${widget.uid}/ratings').where('userId',isEqualTo: FirebaseAuth.instance.currentUser.uid).get();
+    var snapChats = await FirebaseFirestore.instance.collection('Users/${widget.uid}/Chats').doc(FirebaseAuth.instance.currentUser.uid).get();
+    if(snapReviews.size==0 && snapChats.exists){
+      print("can review");
       setState(() {
-        canReview = false;
+        canReview = true;
       });
     } else{
       setState(() {
-        canReview = true;
+        canReview = false;
       });
     }
   }
@@ -209,7 +211,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       
         return Expanded(
           // height: 100,
-          child: snapshot.data.isEmpty ? Center(child: Text("No Feedback found")) : 
+          child:  
           ListView(
             children: [
               canReview ? OutlinedButton(

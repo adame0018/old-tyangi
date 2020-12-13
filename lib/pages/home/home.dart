@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Tyangi/pages/addListing.dart';
 import 'package:Tyangi/pages/chat/chatList.dart';
 import 'package:Tyangi/pages/profile/ProfilePage.dart';
+import 'package:Tyangi/pages/settings/settings.dart';
 import 'package:Tyangi/pages/subCategory/subCategories.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:Tyangi/utitlities/zipCodes.dart';
@@ -82,13 +83,13 @@ class _HomeState extends State<Home> {
     _pages = <Widget>[
       homePage,
 
-      // ProfilePage(uid: FirebaseAuth.instance.currentUser.uid, fromHome: true,),
-      Center(
-        child: OutlinedButton(
-          child: Text('get loc'),
-          onPressed: getLatLong,
-        ),
-      ),
+      ProfilePage(uid: FirebaseAuth.instance.currentUser.uid, fromHome: true,),
+      // Center(
+      //   child: OutlinedButton(
+      //     child: Text('get loc'),
+      //     onPressed: getLatLong,
+      //   ),
+      // ),
       // DetailsScreen(),
       // GridView.count(
       //   crossAxisCount: 2,
@@ -103,7 +104,8 @@ class _HomeState extends State<Home> {
       //   child: Text("Messages")
       // ),
       ChatList(),
-      Center(child: Text("settings"),)
+      SettingsPage()
+      // Center(child: Text("settings"),)
     ];
     _pageController = PageController();
     user = FirebaseAuth.instance.currentUser;

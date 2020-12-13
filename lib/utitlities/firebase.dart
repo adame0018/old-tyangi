@@ -17,7 +17,7 @@ Future<void> setupUser({String name, String email, String contact, String zipCod
     'name': name,
     'contact': contact,
     'zipCode': zipCode,
-    'profilePic': '',
+    'profilePic': 'https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4',
     'avgRating': 0,
     'numRatings': 0,
     'position': geoPoint.data,

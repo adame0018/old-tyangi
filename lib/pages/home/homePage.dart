@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   bool isSlider = false;
   double label = 50*1.6;
   TextEditingController searchController;
+  FocusNode searchFocus = FocusNode();
   @override
   void initState() {
     // TODO: implement initState
@@ -142,6 +143,8 @@ class _HomePageState extends State<HomePage> {
             }
           ), 
             secondChild: CupertinoTextField(
+              focusNode: searchFocus,
+              controller: searchController,
               onSubmitted: (value){
                 Navigator.of(context).push(
                   CupertinoPageRoute(builder: (_) => SearchResults(searchParam: searchController.text))
@@ -149,7 +152,7 @@ class _HomePageState extends State<HomePage> {
               },
               padding: EdgeInsets.all(5),
               placeholder: "Search", 
-              suffix: Padding(
+              prefix: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Icon(CupertinoIcons.search, color: Colors.black54,),
               ),
@@ -225,12 +228,15 @@ class _HomePageState extends State<HomePage> {
             
       //     ),
       //   ),
-      body: RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: categories.isEmpty || featuredListings.isEmpty ? 
-            Center(child: CircularProgressIndicator()) :
-            Body(categories: categories, featuredListings: featuredListings, radius: radius)
-        )
+      body: GestureDetector(
+        onTap: searchFocus.unfocus,
+              child: RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: categories.isEmpty || featuredListings.isEmpty ? 
+              Center(child: CircularProgressIndicator()) :
+              Body(categories: categories, featuredListings: featuredListings, radius: radius)
+          ),
+      )
       
       );
     // return FutureBuilder<DocumentSnapshot>(
