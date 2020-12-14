@@ -1,11 +1,13 @@
 import 'dart:ffi';
 
 import 'package:Tyangi/models/Listing.dart';
+import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/pages/addListing.dart';
 import 'package:Tyangi/pages/home/components/body.dart';
 import 'package:Tyangi/pages/listings/searchResults.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   User user;
+  AppUser currentUser;
   List<String> categories = List<String>();
   List<Listing> featuredListings = List<Listing>();
   double radius = 50*1.6;
@@ -34,8 +37,17 @@ class _HomePageState extends State<HomePage> {
     user = FirebaseAuth.instance.currentUser;
     loadCategories();
     loadFeaturedListings();
+    loadCurrentUser();
     getRadius();
     searchController = TextEditingController();
+  }
+
+  loadCurrentUser() async {
+    var temp = await
+    getUserFromId(FirebaseAuth.instance.currentUser.uid);
+    setState(() {
+      currentUser = temp;
+    });
   }
 
   getRadius() async{
@@ -183,26 +195,60 @@ class _HomePageState extends State<HomePage> {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: _height/20, horizontal: 10),
           child: Column(
-              children: [OutlinedButton(
+              children: [
+                SizedBox(height: _height/40),
+                 AspectRatio(
+              aspectRatio: 3,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(width: 0.5, color: Colors.grey),
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                      // "https://loremflickr.com/640/360"
+                      currentUser == null ? "https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4" :
+                      currentUser.profilePic ??"https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4"
+                    ),
+                    fit: BoxFit.contain
+                  )
+                ),
+                )
+                
+              ),
+              SizedBox(height: _height/40),
+              Text(
+                currentUser==null ? "" : currentUser.name,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              SizedBox(height: _height/40),
+               InkWell(
+            onTap: (){
+              
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+              decoration: BoxDecoration(
+                border: Border(
+                  top:BorderSide(width: 1, color: Colors.grey),
+                  bottom: BorderSide(width: 1, color: Colors.grey),
+                )
+              ),
+              child: Text(
+                 "Repost Tokens: ${currentUser==null ? "" : currentUser.repostTokens??0}",
+                style: TextStyle(
+                  fontSize: 18,
+                ),  
+              )
+            ),
+          ),
+              SizedBox(height: _height/20),
+                OutlinedButton(
                 child: Text("Sign Out"),
                 onPressed: signOut,  
               ),
-              Slider(
-                max: 50*1.6,
-                min: 10*1.6,
-                value: radius,
-                divisions: 5,
-                onChanged: (rad) {
-                  // await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser.uid).update({
-                  //   'radius': rad
-                  // });
-                  setRadius(rad);
-                  // print(getRadius());
-                  // setState(() {
-                  //   radius=rad;
-                  // });
-                }
-              )
+
+             
               ]
             ),
         )

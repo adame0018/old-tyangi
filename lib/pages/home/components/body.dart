@@ -7,6 +7,7 @@ import 'package:Tyangi/utitlities/sizeConfig.dart';
 import 'package:Tyangi/widgets/InfiniteGridView.dart';
 import 'package:Tyangi/widgets/sliders/premiumSlider.dart';
 import 'package:Tyangi/widgets/sliders/servicesSlider.dart';
+import 'package:Tyangi/widgets/sliders/vehicledSlider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -154,6 +155,15 @@ class _BodyState extends State<Body> {
                 print("snapshit");
                 print(snapshot.hasData);
                 if(snapshot.hasData){
+                  
+                  snapshot.data.sort(
+                    (a, b) {
+                      Timestamp aDate = a['createdAt'];
+                      Timestamp bDate = b['createdAt'];
+                      return bDate.compareTo(aDate);
+                    }
+                  );
+                  
                 return GridView.count(
                         // controller: scrollController,
                         scrollDirection: Axis.vertical,
@@ -213,7 +223,8 @@ class _BodyState extends State<Body> {
             SizedBox(
               height:25,
             ),
-            FeaturedListings(listings: widget.featuredListings, title: "Featured"),
+            VehiclesSlider(title: "Vehicles"),
+            // FeaturedListings(listings: widget.featuredListings, title: "Featured"),
             // FeaturedListings(listings: widget.featuredListings, title: "Popular",),
             // SizedBox(
             //   height:25,
