@@ -228,8 +228,8 @@ class _AddListingState extends State<AddListing> {
       _titleController.text == null || _titleController.text.isEmpty ||
       _descriptionController.text == null || _descriptionController.text.isEmpty ||
       _priceController.text == null || _priceController.text.isEmpty ||
-      _locationController.text == null || _locationController.text.isEmpty ||
-      category.isEmpty || subCategory.isEmpty || (autoRepost && (pickedDate == null || time == null))
+      _locationController.text == null || _locationController.text.isEmpty || condition.isEmpty ||
+      contactOption.isEmpty ||category.isEmpty || subCategory.isEmpty || (autoRepost && (pickedDate == null || time == null))
     ){
       showSnackBar("Please fill All the fields");
       return;

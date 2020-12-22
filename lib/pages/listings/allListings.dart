@@ -148,6 +148,13 @@ class _AllListingsState extends State<AllListings> {
 
 
             if(snapshot.hasData){
+              snapshot.data.sort(
+                    (a, b) {
+                      Timestamp aDate = a['createdAt'];
+                      Timestamp bDate = b['createdAt'];
+                      return bDate.compareTo(aDate);
+                    }
+                  );
               
               return GridView.count(
                           controller: scrollController,

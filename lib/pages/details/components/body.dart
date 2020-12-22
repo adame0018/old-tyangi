@@ -18,6 +18,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../models/Listing.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../utitlities/firebase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Body extends StatefulWidget {
   // final Product product;
@@ -87,6 +88,11 @@ class _BodyState extends State<Body> {
 
   }
 
+  launchTel(String uid) async {
+    var user = await getUserFromId(uid);
+    launch("tel:${user.contact}");
+  }
+
   @override
   Widget build(BuildContext context) {
     var _height = MediaQuery.of(context).size.height;
@@ -107,7 +113,8 @@ class _BodyState extends State<Body> {
               widget.listing.uid != FirebaseAuth.instance.currentUser.uid ?
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 60),
-                child: submitButton(context: context, hint: "Chat", isLoading: _isLoading,onSubmit: () async{
+                child: submitButton(context: context, hint: "Contact", isLoading: _isLoading,onSubmit: () async{
+                  widget.listing.contactOption=="Phone" ? launchTel(widget.listing.uid) :
                   await openChat(peerId: widget.listing.uid, context: context);
                 },),
               ) : SizedBox(height: _height/8,),

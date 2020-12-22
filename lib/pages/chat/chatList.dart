@@ -150,6 +150,8 @@ class ChatListState extends State<ChatList> {
     await FlutterLocalNotificationsPlugin().show(0, message['title'].toString(),
         message['body'].toString(), platformChannelSpecifics,
         payload: json.encode(message));
+    
+    //FlutterLocalNotificationsPlugin().zonedSchedule(id, title, body, scheduledDate, notificationDetails, uiLocalNotificationDateInterpretation: null, androidAllowWhileIdle: null)
 
   //  await FlutterLocalNotificationsPlugin().show(
   //      0, 'plain title', 'plain body', platformChannelSpecifics,
