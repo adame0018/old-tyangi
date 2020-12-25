@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:Tyangi/models/Listing.dart';
@@ -67,7 +68,14 @@ class _HomePageState extends State<HomePage> {
     prefs.setDouble('radius', rad);
     setState(() {
       radius = rad;
+      // isSlider = !isSlider;
     });
+    // Timer(
+    //   Duration(seconds: 1), 
+    //   setState((){
+
+    //   })
+    //   );
   }
 
   Future<void> loadCategories() async {
@@ -137,7 +145,15 @@ class _HomePageState extends State<HomePage> {
               // );
             },
             child: 
-            Icon(Icons.linear_scale_outlined, color: Colors.blue,)),
+              AnimatedCrossFade(
+                firstChild: Text("Close", style: TextStyle(color: Colors.blue),),
+                secondChild: Icon(Icons.map_outlined, color: Colors.blue,),
+                crossFadeState: isSlider ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                duration: Duration(milliseconds: 300),
+              )
+            // isSlider ? Text("Close", style: TextStyle(color: Colors.blue),) :
+            // Icon(Icons.map_outlined, color: Colors.blue,)
+            ),
             // Text("Radius", style: TextStyle(color: Colors.white),),),
           ],
         ),

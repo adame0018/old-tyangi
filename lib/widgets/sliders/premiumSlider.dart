@@ -10,10 +10,12 @@ import '../../pages/details/details_screen.dart';
 class PremiumSlider extends StatefulWidget {
   PremiumSlider({
     // @required this.listings,
-    @required this.title
+    @required this.title,
+    @required this.orientation
   });
   // final List<Listing> listings;
   final String title;
+  final Orientation orientation;
 
   @override
   _PremiumSliderState createState() => _PremiumSliderState();
@@ -23,11 +25,11 @@ class _PremiumSliderState extends State<PremiumSlider> {
   List<dynamic> listings = List<dynamic>();
 
   loadListings() async {
-    var snap = await FirebaseFirestore.instance.collection('PremiumSlider').get();
+    var time = Timestamp.now();
+    var snap = await FirebaseFirestore.instance.collection('PremiumSlider').where('expirationTime', isGreaterThanOrEqualTo: time).get();
     snap.docs.forEach((doc) {
       setState(() {
         listings.add(Listing.fromJson(doc.data()));
-        print("adding");
       }); 
      });
   }
@@ -35,7 +37,7 @@ class _PremiumSliderState extends State<PremiumSlider> {
   List<Widget> getFeaturedCards(){
     List<Widget> cards = List<Widget>();
     for(int i=0; i<9-listings.length; i++){
-                  cards.add(FeaturedCard(pageTag: "PremiumSlider$i",));
+                  cards.add(FeaturedCard(pageTag: "PremiumSlider$i", slider: "PremiumSlider",));
                 }
     return cards;
   }
@@ -48,52 +50,56 @@ class _PremiumSliderState extends State<PremiumSlider> {
 
   @override
   Widget build(BuildContext context) {
-    var _height = MediaQuery.of(context).size.height;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(10)),
-          child: Text(widget.title, style: TextStyle(fontSize: _height/40, fontWeight: FontWeight.w700 ),),
-        ),
-        // SizedBox(height: getProportionateScreenWidth(20)),
-        AspectRatio(
-          aspectRatio: 21.5/9,
-                  child: Container(
-            // height: _height / 3.5,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                ...listings.map((listing) => ListingCard(pageTag: "PremiumSlider", listing: listing)).toList(),
-                ...getFeaturedCards()
-
-              ]
-            )
-            
-            // ListView.builder(
-            //   itemCount: 9,
-            //   scrollDirection: Axis.horizontal,
-            //   itemBuilder: (context, index){
-            //     return ListingCard(listing: listings[index], pageTag: "Home",);
-            //   },
-              // children: [
-              //       ProductCard(),
-              //   //SizedBox(width: getProportionateScreenWidth(20)),
-              //     //   ProductCard(),
-              //     // //  SizedBox(width: getProportionateScreenWidth(20)),
-              //     //   ProductCard(),
-              //     //   ProductCard(),
-              //     //   ProductCard()
-              //        // here by default width and height is 0
-                  
-                
-              // ],
+      var _height = MediaQuery.of(context).size.height;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(10)),
+              child: Text(
+                widget.title, 
+                style: TextStyle(
+                  fontSize: widget.orientation == Orientation.landscape ?_height/20 : _height/40, 
+                  fontWeight: FontWeight.w700 ),),
             ),
-          ),
-        
-      ],
-    );
-  }
+            // SizedBox(height: getProportionateScreenWidth(20)),
+            AspectRatio(
+              aspectRatio: widget.orientation == Orientation.landscape ? 5 : 21.5/9,
+                      child: Container(
+                // height: _height / 3.5,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    ...listings.map((listing) => ListingCard(pageTag: "PremiumSlider", listing: listing)).toList(),
+                    ...getFeaturedCards()
+
+                  ]
+                )
+                
+                // ListView.builder(
+                //   itemCount: 9,
+                //   scrollDirection: Axis.horizontal,
+                //   itemBuilder: (context, index){
+                //     return ListingCard(listing: listings[index], pageTag: "Home",);
+                //   },
+                  // children: [
+                  //       ProductCard(),
+                  //   //SizedBox(width: getProportionateScreenWidth(20)),
+                  //     //   ProductCard(),
+                  //     // //  SizedBox(width: getProportionateScreenWidth(20)),
+                  //     //   ProductCard(),
+                  //     //   ProductCard(),
+                  //     //   ProductCard()
+                  //        // here by default width and height is 0
+                      
+                    
+                  // ],
+                ),
+              ),
+            
+          ],
+        );
+      }
 }
 

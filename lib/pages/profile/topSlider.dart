@@ -8,9 +8,10 @@ import 'package:scrolling_page_indicator/scrolling_page_indicator.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class TopSlider extends StatefulWidget {
-  TopSlider({@required this.user});
+  TopSlider({@required this.user, @required this.orientation});
   // final String uid;
   final AppUser user;
+  final Orientation orientation;
   @override
   _TopSliderState createState() => _TopSliderState();
 }
@@ -41,15 +42,17 @@ class _TopSliderState extends State<TopSlider> {
     return Column(
       children: [
         Expanded(
-                  child: PageView(
+          child: PageView(
             controller: controller,
             children: [
+              widget.orientation == Orientation.portrait ?
               Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     AspectRatio(
                       aspectRatio: 4,
+                      //4
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(width: 0.5, color: Colors.grey),
@@ -59,13 +62,13 @@ class _TopSliderState extends State<TopSlider> {
                               //"https://loremflickr.com/640/360"
                               widget.user.profilePic??"https://loremflickr.com/640/360"
                             ),
-                            fit: BoxFit.contain
+                            fit: BoxFit.cover
                           )
                         ),
                         
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
                     Text(widget.user.name, 
                     style: Theme.of(context).textTheme.headline6),
                     SizedBox(height: 10),
@@ -77,6 +80,52 @@ class _TopSliderState extends State<TopSlider> {
                       itemBuilder: (context, index) => Icon(
                         Icons.star,
                         color: Colors.amber,  
+                      )
+                    )
+                  ],
+                ),
+              ) :
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 0.5, color: Colors.grey),
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: CachedNetworkImageProvider(
+                            //"https://loremflickr.com/640/360"
+                            widget.user.profilePic??"https://loremflickr.com/640/360"
+                          ),
+                          fit: BoxFit.cover
+                        )
+                      ),
+                      
+                    ),
+                    // SizedBox(height: 10),
+                    Text(widget.user.name, 
+                    style: Theme.of(context).textTheme.bodyText1),
+                    
+                  ],
+                ),
+                    SizedBox(
+                      height: 50,
+                      child: VerticalDivider()),
+                    RatingBarIndicator(
+                      rating: widget.user.avgRating,
+                      itemCount: 5,
+                      itemSize: 15,
+                      direction: Axis.horizontal,
+                      itemBuilder: (context, index) => Icon(
+                    Icons.star,
+                    color: Colors.amber,  
                       )
                     )
                   ],

@@ -136,60 +136,67 @@ class _EditProfileState extends State<EditProfile> {
         centerTitle: true,
         
       ),
-      body: user!=null ? Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            SizedBox(height: _height/30),
-            AspectRatio(
-              aspectRatio: 3,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.5, color: Colors.grey),
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: imageData != null ?MemoryImage(imageData)
-                    :
-                    CachedNetworkImageProvider(
-                      // "https://loremflickr.com/640/360"
-                      user.profilePic??"https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4"
+      body: user!=null ? 
+        OrientationBuilder(
+          builder: (context, orientation) {
+            return SingleChildScrollView(
+                  child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  SizedBox(height: _height/30),
+                  AspectRatio(
+                    aspectRatio: orientation == Orientation.portrait ? 3 : 7,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 0.5, color: Colors.grey),
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: imageData != null ?MemoryImage(imageData)
+                          :
+                          CachedNetworkImageProvider(
+                            // "https://loremflickr.com/640/360"
+                            user.profilePic??"https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4"
+                          ),
+                          fit: BoxFit.contain
+                        )
+                      ),
+                      )
+                      
                     ),
-                    fit: BoxFit.contain
-                  )
-                ),
-                )
-                
-              ),
-            SizedBox(height: _height/40,),
-            OutlinedButton(
-              onPressed: loadAssets, 
-              child: Text("Pick Image")
-            ),
-            SizedBox(height: _height/40,),
-            Row(
-              children: [
-                Text(
-                  "Zip Code",
-                  style: TextStyle(
-                    fontSize: 20
+                  SizedBox(height: _height/40,),
+                  OutlinedButton(
+                    onPressed: loadAssets, 
+                    child: Text("Pick Image")
                   ),
-                ),
-              ],
+                  SizedBox(height: _height/40,),
+                  Row(
+                    children: [
+                      Text(
+                        "Zip Code",
+                        style: TextStyle(
+                          fontSize: 20
+                        ),
+                      ),
+                    ],
+                  ),
+                  entryField(
+                    "",
+                    controller: locationController,
+                    isNumeric: true
+                  ),
+                  submitButton(
+                    context: context,
+                    hint: "Save",
+                    isLoading: isLoading,
+                    onSubmit: onSave
+                  )
+                ]
+              ),
             ),
-            entryField(
-              "",
-              controller: locationController,
-              isNumeric: true
-            ),
-            submitButton(
-              context: context,
-              hint: "Save",
-              isLoading: isLoading,
-              onSubmit: onSave
-            )
-          ]
-        ),
-      ) : Center(child: CircularProgressIndicator()),
+      );
+          }
+        ) : Center(child: CircularProgressIndicator()),
       
     );
   }

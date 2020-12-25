@@ -148,7 +148,7 @@ class _BodyState extends State<Body> {
     scrollController.addListener(_scrollListener);
   }
 
-  listingsGrid(){
+  listingsGrid(Orientation orientation){
     return StreamBuilder<List<DocumentSnapshot>>(
               stream: stream,
               builder: (context, snapshot) {
@@ -171,11 +171,18 @@ class _BodyState extends State<Body> {
                         mainAxisSpacing: 10.0,
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
-                        childAspectRatio: 0.7,
+                        childAspectRatio: orientation == Orientation.portrait?0.7: 1.5,
                         // physics: const AlwaysScrollableScrollPhysics(),
                         children: [
                           ...snapshot.data.map(
-                            (e) => ProductCard(pageTag: "gridview", listing: Listing.fromJson(e.data()), aspectRatioImage: 0.97,fontSizeMultiple: 0.8)
+                            (e) => ProductCard(
+                              pageTag: "gridview", 
+                              listing: Listing.fromJson(e.data()), 
+                              aspectRatioImage: orientation == Orientation.portrait? 0.97 : 2.2,
+                              // 0.97,
+                              fontSizeMultiple: orientation == Orientation.portrait? 0.8 : 2
+                              // 0.8
+                            )
                           ).toList()
                         //   ...dataList.map((value) {
                         //     return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8,);
@@ -197,101 +204,110 @@ class _BodyState extends State<Body> {
   Widget build(BuildContext context) {
     var _height = MediaQuery.of(context).size.height;
     return SafeArea(
-      child: SingleChildScrollView(
-        controller: scrollController,
-        physics: AlwaysScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            // Row(
-            //   children: [
-            //     CupertinoTextField(
+      child: OrientationBuilder(
+        builder: (context, orientation) {
+          return SingleChildScrollView(
+            controller: scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            child: Column(
 
-            //     )
-            //   ],
-            // ),
-            SizedBox(
-              height:10,
-            ),
-            Categories(categories: widget.categories),
-            PremiumSlider(title: "Premium"),
+              children: [
+                // Row(
+                //   children: [
+                //     CupertinoTextField(
 
-            SizedBox(
-              height:25,
-            ),
-            ServicesSlider(title: "Services"),
-            SizedBox(
-              height:25,
-            ),
-            VehiclesSlider(title: "Vehicles"),
-            // FeaturedListings(listings: widget.featuredListings, title: "Featured"),
-            // FeaturedListings(listings: widget.featuredListings, title: "Popular",),
-            // SizedBox(
-            //   height:25,
-            // ),
-            // FeaturedListings(listings: widget.featuredListings, title: "Premium"),
-            // SizedBox(
-            //   height:25,
-            // ),
-            // // InfiniteGridView(),
-            SizedBox(height:25,),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("All Listings", style: TextStyle(fontSize: _height/40, fontWeight: FontWeight.w700 ),),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => AllListings())
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Text("View All", style: TextStyle(color: Colors.blue[400]),),
-                        Icon(Icons.arrow_forward_ios, size: 12, color: Colors.blue[400],)
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            listingsGrid()
-            // StreamBuilder<List<DocumentSnapshot>>(
-            //   stream: stream,
-            //   builder: (context, snapshot) {
-            //     print("snapshit");
-            //     print(snapshot.hasData);
-            //     if(snapshot.hasData){
-            //     return GridView.count(
-            //             // controller: scrollController,
-            //             scrollDirection: Axis.vertical,
-            //             crossAxisCount: 4,
-            //             mainAxisSpacing: 10.0,
-            //             shrinkWrap: true,
-            //             physics: BouncingScrollPhysics(),
-            //             childAspectRatio: 0.7,
-            //             // physics: const AlwaysScrollableScrollPhysics(),
-            //             children: [
-            //               ...snapshot.data.map(
-            //                 (e) => ProductCard(pageTag: "gridview", listing: Listing.fromJson(e.data()), aspectRatioImage: 0.97,fontSizeMultiple: 0.8)
-            //               ).toList()
-            //             //   ...dataList.map((value) {
-            //             //     return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8,);
+                //     )
+                //   ],
+                // ),
+                SizedBox(
+                  height:10,
+                ),
+                Categories(categories: widget.categories, orientation: orientation,),
+                PremiumSlider(title: "Premium", orientation: orientation,),
 
-            //             // }).toList(),
-                        
-            //             ]
-            //           );
-            //     }
-            //     else {
-            //       return CircularProgressIndicator();
-            //     }
-            //   }
-            // )
-          ],
-        ),
+                SizedBox(
+                  height:25,
+                ),
+                ServicesSlider(title: "Services", orientation: orientation,),
+                SizedBox(
+                  height:25,
+                ),
+                VehiclesSlider(title: "Vehicles", orientation: orientation,),
+                // FeaturedListings(listings: widget.featuredListings, title: "Featured"),
+                // FeaturedListings(listings: widget.featuredListings, title: "Popular",),
+                // SizedBox(
+                //   height:25,
+                // ),
+                // FeaturedListings(listings: widget.featuredListings, title: "Premium"),
+                // SizedBox(
+                //   height:25,
+                // ),
+                // // InfiniteGridView(),
+                SizedBox(height:25,),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(10)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "All Listings", 
+                        style: TextStyle(
+                          fontSize: orientation == Orientation.landscape ?_height/20 : _height/40, 
+                          fontWeight: FontWeight.w700 ),),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => AllListings())
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Text("View All", style: TextStyle(color: Colors.blue[400]),),
+                            Icon(Icons.arrow_forward_ios, size: 12, color: Colors.blue[400],)
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                listingsGrid(orientation)
+                // StreamBuilder<List<DocumentSnapshot>>(
+                //   stream: stream,
+                //   builder: (context, snapshot) {
+                //     print("snapshit");
+                //     print(snapshot.hasData);
+                //     if(snapshot.hasData){
+                //     return GridView.count(
+                //             // controller: scrollController,
+                //             scrollDirection: Axis.vertical,
+                //             crossAxisCount: 4,
+                //             mainAxisSpacing: 10.0,
+                //             shrinkWrap: true,
+                //             physics: BouncingScrollPhysics(),
+                //             childAspectRatio: 0.7,
+                //             // physics: const AlwaysScrollableScrollPhysics(),
+                //             children: [
+                //               ...snapshot.data.map(
+                //                 (e) => ProductCard(pageTag: "gridview", listing: Listing.fromJson(e.data()), aspectRatioImage: 0.97,fontSizeMultiple: 0.8)
+                //               ).toList()
+                //             //   ...dataList.map((value) {
+                //             //     return ProductCard(listing: value, aspectRatioImage: 0.97,fontSizeMultiple: 0.8,);
+
+                //             // }).toList(),
+                            
+                //             ]
+                //           );
+                //     }
+                //     else {
+                //       return CircularProgressIndicator();
+                //     }
+                //   }
+                // )
+              ],
+            ),
+          );
+        }
       ),
     );
   }

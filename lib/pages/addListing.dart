@@ -229,7 +229,7 @@ class _AddListingState extends State<AddListing> {
       _descriptionController.text == null || _descriptionController.text.isEmpty ||
       _priceController.text == null || _priceController.text.isEmpty ||
       _locationController.text == null || _locationController.text.isEmpty || condition.isEmpty ||
-      contactOption.isEmpty ||category.isEmpty || subCategory.isEmpty || (autoRepost && (pickedDate == null || time == null))
+      category.isEmpty || subCategory.isEmpty || (autoRepost && (pickedDate == null || time == null))
     ){
       showSnackBar("Please fill All the fields");
       return;
@@ -250,6 +250,7 @@ class _AddListingState extends State<AddListing> {
             category: category,
             subCategory: subCategory,
             zipCode: _locationController.text,
+            condition: condition,
             autoRepostAt: pickedDate.add(Duration(hours: time.hour, minutes: time.minute))
           );
         }else {
@@ -259,6 +260,7 @@ class _AddListingState extends State<AddListing> {
             autoRepost: autoRepost,
             category: category,
             subCategory: subCategory,
+            condition: condition,
             zipCode: _locationController.text
           );
         }
@@ -430,19 +432,19 @@ class _AddListingState extends State<AddListing> {
                           },
                         ),
                         autoRepostWidget(),
-                        dropDown(
-                          focusNode: focusNodes['contactOption'],
-                          hint: "Contact Options", 
-                          value: contactOption,
-                          items: ["Chat", "Phone"],
-                          onChanged: (item) {
-                              setState(() {
-                                contactOption = item;
-                              });
+                        // dropDown(
+                        //   focusNode: focusNodes['contactOption'],
+                        //   hint: "Contact Options", 
+                        //   value: contactOption,
+                        //   items: ["Chat", "Phone"],
+                        //   onChanged: (item) {
+                        //       setState(() {
+                        //         contactOption = item;
+                        //       });
                               
                             
-                          },
-                        ),
+                        //   },
+                        // ),
                         dropDown(
                           focusNode: focusNodes['category'],
                           hint: "Category", 

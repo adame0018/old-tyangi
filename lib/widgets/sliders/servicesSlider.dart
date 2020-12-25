@@ -10,10 +10,12 @@ import '../../pages/details/details_screen.dart';
 class ServicesSlider extends StatefulWidget {
   ServicesSlider({
     // @required this.listings,
-    @required this.title
+    @required this.title,
+    @required this.orientation
   });
   // final List<Listing> listings;
   final String title;
+  final Orientation orientation;
 
   @override
   _ServicesSliderState createState() => _ServicesSliderState();
@@ -35,7 +37,7 @@ class _ServicesSliderState extends State<ServicesSlider> {
   List<Widget> getFeaturedCards(){
     List<Widget> cards = List<Widget>();
     for(int i=0; i<9-listings.length; i++){
-                  cards.add(FeaturedCard(pageTag: "ServicesSlider$i",));
+                  cards.add(FeaturedCard(pageTag: "ServicesSlider$i", slider: "ServicesSlider",));
                 }
     return cards;
   }
@@ -64,11 +66,15 @@ class _ServicesSliderState extends State<ServicesSlider> {
             Padding(
               padding:
                   EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(10)),
-              child: Text(widget.title, style: TextStyle(fontSize: _height/40, fontWeight: FontWeight.w700 ),),
+              child: Text(
+                widget.title, 
+                style: TextStyle(
+                  fontSize: widget.orientation == Orientation.landscape ?_height/20 : _height/40,  
+                  fontWeight: FontWeight.w700 ),),
             ),
             // SizedBox(height: getProportionateScreenWidth(20)),
             AspectRatio(
-              aspectRatio: 21.5/9,
+              aspectRatio: widget.orientation == Orientation.landscape ? 5 : 21.5/9,
                       child: Container(
                 // height: _height / 3.5,
                 child:  ListView(

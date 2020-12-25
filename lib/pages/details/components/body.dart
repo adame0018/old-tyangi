@@ -113,8 +113,8 @@ class _BodyState extends State<Body> {
               widget.listing.uid != FirebaseAuth.instance.currentUser.uid ?
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 60),
-                child: submitButton(context: context, hint: "Contact", isLoading: _isLoading,onSubmit: () async{
-                  widget.listing.contactOption=="Phone" ? launchTel(widget.listing.uid) :
+                child: submitButton(context: context, hint: "Chat", isLoading: _isLoading,onSubmit: () async{
+                  // widget.listing.contactOption=="Phone" ? launchTel(widget.listing.uid) :
                   await openChat(peerId: widget.listing.uid, context: context);
                 },),
               ) : SizedBox(height: _height/8,),

@@ -74,61 +74,75 @@ with TickerProviderStateMixin{
           ),
 
           body: user == null ? Center(child: CircularProgressIndicator()) : 
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Container(
-                  width: _width,
-                  height: _height/4,
-                  child: TopSlider(user: snapshot.data,)
-                ),
-                Expanded(
-                              child: Column(
-                    children: [
-                      Container(
-                        height: 50,
-                        child: TabBar(
-                          controller: _tabController,
-                          tabs: [
-                            Tab(child: Text("Listings", style: TextStyle(color: Colors.blue),),),
-                            Tab(child: Text("Feedback", style: TextStyle(color: Colors.blue),))
-                          ]
-                        ),
-                      ),
-                      Expanded(
-                        // height: _height-50 - (_height/3.5),
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            listings.isEmpty ? Center(child: Text("No listings found")) : GridView.count(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 10,
-                              crossAxisSpacing: 10,
-                              //itemCount: listings.length,
-                              scrollDirection: Axis.vertical,
-                              // // itemBuilder: (context, index){
-                              //   return ProductCard(listing: listings[index]);
-                              // }
-                              children: [
-                                
-                                ...listings.map((value) {
-                                    return ListingCard(listing: value, pageTag: "Profile", showMenu: value.uid == currentUser.uid);
-                                }).toList(),
-                              ],
+          OrientationBuilder(
+          
+            builder: (context, orientation) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Container(
+                      width: _width,
+                      height: orientation == Orientation.portrait ? _height/4 : _height/5,
+                      child: TopSlider(user: snapshot.data, orientation: orientation)
+                    ),
+                    Expanded(
+                                  child: Column(
+                        children: [
+                          Container(
+                            height: 50,
+                            child: TabBar(
+                              controller: _tabController,
+                              tabs: [
+                                Tab(child: Text("Listings", style: TextStyle(color: Colors.blue),),),
+                                Tab(child: Text("Feedback", style: TextStyle(color: Colors.blue),))
+                              ]
                             ),
-                            Flex(
-                              direction: Axis.vertical,
-                              children: [FeedbackPage(uid: widget.fromHome ? FirebaseAuth.instance.currentUser.uid : widget.uid, scaffoldKey: _scaffoldKey,)]
-                              )
-                          ]
-                        ),
+                          ),
+                          Expanded(
+                            // height: _height-50 - (_height/3.5),
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: [
+                                listings.isEmpty ? Center(child: Text("No listings found")) : GridView.count(
+                                  crossAxisCount: orientation == Orientation.portrait ? 2 : 6,
+                                  
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 10,
+                                  shrinkWrap: true,
+                                  //itemCount: listings.length,
+                                  childAspectRatio: 1,
+                                  scrollDirection: Axis.vertical,
+                                  // // itemBuilder: (context, index){
+                                  //   return ProductCard(listing: listings[index]);
+                                  // }
+                                  children: [
+                                    
+                                    ...listings.map((value) {
+                                        return ListingCard(
+                                          listing: value, 
+                                          pageTag: "Profile", 
+                                          showMenu: value.uid == currentUser.uid,
+                                          aspectRatioImage:orientation == Orientation.portrait ? 1.35 : 1.5,
+                                          fontSizeMultiple: orientation == Orientation.portrait ? 1 : 2,
+                                        );
+                                    }).toList(),
+                                  ],
+                                ),
+                                Flex(
+                                  direction: Axis.vertical,
+                                  children: [FeedbackPage(uid: widget.fromHome ? FirebaseAuth.instance.currentUser.uid : widget.uid, scaffoldKey: _scaffoldKey,)]
+                                  )
+                              ]
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
-              ]
-            ),
+                    )
+                  ]
+                ),
+              );
+            }
           )
         );
         }

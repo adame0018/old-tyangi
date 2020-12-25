@@ -76,7 +76,7 @@ Future<GeoFirePoint> getGeoPointFromZip(String zipCode) async{
 
 Future<String> postListing({String title, String description, String price, bool autoRepost, 
       String category, String subCategory, DateTime autoRepostAt,
-      String zipCode, String condition, String contactOption
+      String zipCode, String condition
       }) async {
   
     String uid  = FirebaseAuth.instance.currentUser.uid;
@@ -95,8 +95,8 @@ Future<String> postListing({String title, String description, String price, bool
       'createdAt': FieldValue.serverTimestamp(),
       'autoRepostAt': autoRepostAt.toUtc(),
       'position': geoPoint.data,
-      'condition': condition,
-      'contactOption': contactOption
+      'condition': condition
+      // 'contactOption': contactOption
     }) : 
       await reference.add({
       'uid': uid,
@@ -110,8 +110,8 @@ Future<String> postListing({String title, String description, String price, bool
       'createdAt': FieldValue.serverTimestamp(),
       'autoRepostAt': null,
       'position': geoPoint.data,
-      'condition': condition,
-      'contactOption': contactOption
+      'condition': condition
+      // 'contactOption': contactOption
     });
     return docRef.id;
 

@@ -17,13 +17,14 @@ class FeaturedCard extends StatefulWidget {
     this.aspectRatioCard = 1,
     this.fontSizeMultiple =1,
     @required this.pageTag,
+    @required this.slider,
     // @required this.listing,
     this.showMenu = false,
   }) : super(key: key);
 
   final double width, aspectRatioCard, aspectRatioImage, fontSizeMultiple;
   // final Listing listing;
-  final String pageTag;
+  final String pageTag, slider;
   static const List<String> menuChoices = ["Mark as Sold", "Renew", "Promote"];
   final bool showMenu;
 
@@ -38,29 +39,7 @@ class _FeaturedCardState extends State<FeaturedCard> {
   List<Listing> listings = List<Listing>();
   Listing selectedListing;
   bool isLoading = false;
-  handleSelect(choice){
-    switch(choice){
-      case "Mark as Sold":
-        print("Mark as Sold");
-        // FirebaseFirestore.instance.collection('Listings').doc(widget.listing.id).update({
-        //   'sold': true,
-        // });
-        break;
-      case "Renew":
-        print("Renew");
-        // FirebaseFirestore.instance.collection('Listings').doc(widget.listing.id).update({
-        //   'createdAt': FieldValue.serverTimestamp(),
-        // });
-        setState(() {
-          enableRenew = false;
-        });
-        break;
-      case "Promote":
-        print("Promote");
-        break;
-
-    }
-  }
+ 
 
   loadCurrentUserListings() async{
     var snap = await FirebaseFirestore.instance.collection('Listings')
@@ -75,11 +54,12 @@ class _FeaturedCardState extends State<FeaturedCard> {
   @override
   void initState() {
     // TODO: implement initState
-    loadCurrentUserListings();
+    // loadCurrentUserListings();
     super.initState();
   }
 
-  _bottomSheet(BuildContext context){
+  _bottomSheet(BuildContext context) async{
+    await loadCurrentUserListings();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -94,20 +74,20 @@ class _FeaturedCardState extends State<FeaturedCard> {
               children: [
                 Text("Promote", style: Theme.of(context).textTheme.headline4,),
                 SizedBox(height: 20),
-                dropDown(
-                  // focusNode: focusNodes['contactOption'],
-                  hint: "Slider", 
-                  value: slider,
-                  items: ["Premium", "Services"],
-                  onChanged: (item) {
-                      setState(() {
-                        slider = item;
-                      });
+                // dropDown(
+                //   // focusNode: focusNodes['contactOption'],
+                //   hint: "Slider", 
+                //   value: slider,
+                //   items: ["Premium", "Services"],
+                //   onChanged: (item) {
+                //       setState(() {
+                //         slider = item;
+                //       });
                       
                     
-                  },
-                ),
-                SizedBox(height: 10),
+                //   },
+                // ),
+                // SizedBox(height: 10),
                 dropDown(
                   // focusNode: focusNodes['contactOption'],
                   hint: "Listing", 
