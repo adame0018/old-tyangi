@@ -5,6 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:Tyangi/pages/auth/signin.dart';
 import 'package:Tyangi/pages/home/home.dart';
+import 'package:flutter/services.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,6 +18,31 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  Future<void> initPlatformState() async {
+    await Purchases.setDebugLogsEnabled(true);
+    await Purchases.setup("DYWlmTdAAhwQZarZEvbwoWLSgPoEJVBQ");
+    // try {
+    // Offerings offerings = await Purchases.getOfferings();
+    // if (offerings.current != null) {
+    //   // Display current offering with offerings.current
+    //   Offering offer  = offerings.all['test_offering'];
+    //   List<Package> packages = offer.availablePackages;
+    //   print(packages);
+    //   print(offerings);
+    // }
+    // } on PlatformException catch (e) {
+    //     // optional error handling
+    //     print("Error: $e");
+    // }
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    initPlatformState();
+  }
+
   @override
   Widget build(BuildContext context) {
     

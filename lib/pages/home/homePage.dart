@@ -6,6 +6,7 @@ import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/pages/addListing.dart';
 import 'package:Tyangi/pages/home/components/body.dart';
 import 'package:Tyangi/pages/listings/searchResults.dart';
+import 'package:Tyangi/pages/purchase/PurchaseAutoPost.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -207,67 +208,72 @@ class _HomePageState extends State<HomePage> {
         //   : CupertinoTextField(placeholder: "Search",),
         // trailing: Icon(CupertinoIcons.search, size: 18, color: Colors.white,),
       ),
-      drawer: Drawer(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: _height/20, horizontal: 10),
-          child: Column(
-              children: [
-                SizedBox(height: _height/40),
-                 AspectRatio(
-              aspectRatio: 3,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.5, color: Colors.grey),
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      // "https://loremflickr.com/640/360"
-                      currentUser == null ? "https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4" :
-                      currentUser.profilePic ??"https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4"
+      drawer: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('Users').doc('${FirebaseAuth.instance.currentUser.uid}').snapshots(),
+        builder: (context, snapshot) {
+          return Drawer(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: _height/20, horizontal: 10),
+              child: Column(
+                  children: [
+                    SizedBox(height: _height/40),
+                     AspectRatio(
+                  aspectRatio: 3,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 0.5, color: Colors.grey),
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: CachedNetworkImageProvider(
+                          // "https://loremflickr.com/640/360"
+                          currentUser == null ? "https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4" :
+                          currentUser.profilePic ??"https://firebasestorage.googleapis.com/v0/b/tyangi-18c2e.appspot.com/o/PngItem_4212617.png?alt=media&token=f350715b-249e-4316-94a1-e19083c38dc4"
+                        ),
+                        fit: BoxFit.contain
+                      )
                     ),
-                    fit: BoxFit.contain
+                    )
+                    
+                  ),
+                  SizedBox(height: _height/40),
+                  Text(
+                    currentUser==null ? "" : currentUser.name,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  SizedBox(height: _height/40),
+                   InkWell(
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => PurchaseAutoPost()));
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top:BorderSide(width: 1, color: Colors.grey),
+                      bottom: BorderSide(width: 1, color: Colors.grey),
+                    )
+                  ),
+                  child: Text(
+                     "Repost Tokens: ${!snapshot.hasData ? "" : snapshot.data['repostTokens']??0}",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),  
                   )
                 ),
-                )
-                
               ),
-              SizedBox(height: _height/40),
-              Text(
-                currentUser==null ? "" : currentUser.name,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              SizedBox(height: _height/40),
-               InkWell(
-            onTap: (){
-              
-            },
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
-              decoration: BoxDecoration(
-                border: Border(
-                  top:BorderSide(width: 1, color: Colors.grey),
-                  bottom: BorderSide(width: 1, color: Colors.grey),
-                )
-              ),
-              child: Text(
-                 "Repost Tokens: ${currentUser==null ? "" : currentUser.repostTokens??0}",
-                style: TextStyle(
-                  fontSize: 18,
-                ),  
-              )
-            ),
-          ),
-              SizedBox(height: _height/20),
-                OutlinedButton(
-                child: Text("Sign Out"),
-                onPressed: signOut,  
-              ),
+                  SizedBox(height: _height/20),
+                    OutlinedButton(
+                    child: Text("Sign Out"),
+                    onPressed: signOut,  
+                  ),
 
-             
-              ]
-            ),
-        )
+                 
+                  ]
+                ),
+            )
+          );
+        }
       ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       //   floatingActionButton: SizedBox(

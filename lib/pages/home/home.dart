@@ -17,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import '../details/details_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:csv/csv.dart';
@@ -36,13 +37,17 @@ class _HomeState extends State<Home> {
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   List<Widget> _pages;
   PageController _pageController;
+  PurchaserInfo _purchaserInfo;
+  Offering _offer;
+  Package _package;
+  String bought = 'not bought';
 
   loadCsv() async{
     final myData = await rootBundle.loadString('assets/zips.json');
     List jsonData = json.decode(myData);
-    print(jsonData[0]);
+    // print(jsonData[0]);
     var result = jsonData.singleWhere((element) => element['zip code'] == '35006');
-    print(result);
+    // print(result);
     //List<List<dynamic>> csvTable = CsvToListConverter().convert(myData);
 
     
@@ -54,7 +59,7 @@ class _HomeState extends State<Home> {
     await FirebaseFirestore.instance.collection('Listings').doc('QX1Iq27RE3D6RX1WThEe').update({
       'position': point.data
     });
-    print("updated");
+    // print("updated");
   }
 
   getLatLong() async{
@@ -63,7 +68,7 @@ class _HomeState extends State<Home> {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     Map<String, dynamic> result = jsonDecode(response.body);
-    print(result['results'][0]['locations'][0]['latLng']['lat']);
+    // print(result['results'][0]['locations'][0]['latLng']['lat']);
     // var lat = result['lat'];
     // var long = result['lng'];
     // geoPoint = Geoflutterfire().point(latitude: lat, longitude: long);
@@ -76,18 +81,83 @@ class _HomeState extends State<Home> {
   }
   }
 
+  setupPurchases() async {
+    PurchaserInfo purchaserInfo;
+    try {
+      purchaserInfo = await Purchases.getPurchaserInfo();
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+    Offerings offerings;
+    try {
+      offerings = await Purchases.getOfferings();
+      if (offerings.current != null) {
+        // Display current offering with offerings.current
+        Offering offer  = offerings.all['test_offering'];
+        if(offer!=null){
+          if (!mounted) return;
+          setState(() {
+            _offer = offer;
+            _package = offer.getPackage('tokens-10');
+          });
+        }
+    }
+    } on PlatformException catch (e) {
+      print(e);
+    }
+    if (!mounted) return;
+
+    setState(() {
+      _purchaserInfo = purchaserInfo;
+      // _offerings = offerings;
+    });
+    
+  
+  }
+
+  buy() async {
+    try {
+      PurchaserInfo purchaserInfo = await Purchases.purchasePackage(_package);
+      
+      // var isPro = purchaserInfo.entitlements.all["auto_post_test"].isActive;
+      // print("PRooo: $isPro");
+      // if (isPro) {
+      //   // Unlock that great "pro" content
+      //   setState(() {
+      //     bought = 'You have bought tokens';
+      //   });
+      // }
+    } on PlatformException catch (e) {
+      var errorCode = PurchasesErrorHelper.getErrorCode(e);
+      if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+        // showSnackbar(e);
+        print("Error $e");             
+      }
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    // setupPurchases();
     _pages = <Widget>[
       homePage,
 
       ProfilePage(uid: FirebaseAuth.instance.currentUser.uid, fromHome: true,),
       // Center(
-      //   child: OutlinedButton(
-      //     child: Text('get loc'),
-      //     onPressed: getLatLong,
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       OutlinedButton(
+      //         child: Text('get loc'),
+      //         onPressed: buy,
+      //       ),
+      //       SizedBox(height: 10,),
+      //       Text(bought),
+      //       _purchaserInfo.entitlements.all["auto_post_test"].isActive ? Text("isPro"): Text("NotPro")
+      //     ],
       //   ),
       // ),
       // DetailsScreen(),
