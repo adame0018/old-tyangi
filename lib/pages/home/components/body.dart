@@ -1,3 +1,4 @@
+import 'package:Tyangi/models/Category.dart';
 import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/pages/home/components/categories.dart';
 import 'package:Tyangi/pages/home/components/featuredListings.dart';
@@ -23,7 +24,7 @@ class Body extends StatefulWidget {
     @required this.featuredListings,
     @required this.radius
   });
-  final List<String> categories;
+  final List<Category> categories;
   final List<Listing> featuredListings;
   final double radius;
 

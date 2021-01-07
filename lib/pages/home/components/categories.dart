@@ -1,3 +1,4 @@
+import 'package:Tyangi/models/Category.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ class Categories extends StatelessWidget {
     @required this.categories,
     @required this.orientation
   });
-  final List<String> categories;
+  final List<Category> categories;
   final Orientation orientation;
   @override
   Widget build(BuildContext context) {
@@ -44,14 +45,13 @@ class Categories extends StatelessWidget {
                       aspectRatio: 0.82,
                     // margin: EdgeInsets.symmetric(horizontal: 5),
                     child: CategoryCard(
-                      icon: categories[index],
-                      text: categories[index],
+                      text: categories[index].name,
                       orientation: orientation,
                       press: () {
               // List<String> subCategories = List<String>();
               // subCategories.addAll(await getSubCategories(categories[index]));
               Navigator.of(context).push(
-                CupertinoPageRoute(builder: (_) => SubCategories(categories[index],))
+                CupertinoPageRoute(builder: (_) => SubCategories(categories[index].name,))
                 );
                       },
                     ),
@@ -79,14 +79,13 @@ class Categories extends StatelessWidget {
                       aspectRatio: 1,
                     // margin: EdgeInsets.symmetric(horizontal: 5),
                     child: CategoryCard(
-                      icon: categories[index],
-                      text: categories[index],
+                      text: categories[index].name,
                       orientation: orientation,
                       press: () {
               // List<String> subCategories = List<String>();
               // subCategories.addAll(await getSubCategories(categories[index]));
               Navigator.of(context).push(
-                CupertinoPageRoute(builder: (_) => SubCategories(categories[index],))
+                CupertinoPageRoute(builder: (_) => SubCategories(categories[index].name,))
                 );
                       },
                     ),

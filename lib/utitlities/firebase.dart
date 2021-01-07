@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Tyangi/models/Category.dart';
 import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/models/rating.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -118,12 +119,12 @@ Future<String> postListing({String title, String description, String price, bool
   
 }
 
-Future<List<String>> getCategories() async{
-  List<String> categories = List<String>();
+Future<List<Category>> getCategories() async{
+  List<Category> categories = List<Category>();
   await FirebaseFirestore.instance.collection("Categories").get().then(
       (value) => value.docs.forEach(
         (e) {
-          categories.add(e.id);
+          categories.add(Category.fromJson(e.data()));
           // category = categories[0];
           }
         )

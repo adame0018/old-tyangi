@@ -73,8 +73,11 @@ class _MyAppState extends State<MyApp> {
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (context, snap) {
                   SizeConfig().init(context);
-                  print(FirebaseAuth.instance.currentUser);
+                  // print(FirebaseAuth.instance.currentUser);
                   if(snap.hasData){
+                    Purchases.identify(snap.data.uid);
+                    Purchases.setEmail(snap.data.email);
+                    Purchases.setDisplayName(snap.data.displayName);
                     return Home();
                   } else if (snap.connectionState == ConnectionState.waiting){
                     return Scaffold(body: Center(child: CircularProgressIndicator()));

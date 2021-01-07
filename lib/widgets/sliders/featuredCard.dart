@@ -7,7 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 class FeaturedCard extends StatefulWidget {
   const FeaturedCard({
@@ -39,11 +41,19 @@ class _FeaturedCardState extends State<FeaturedCard> {
   List<Listing> listings = List<Listing>();
   Listing selectedListing;
   bool isLoading = false;
+  Offering _offer;
+  Package _package;
+  PurchaserInfo _purchaserInfo;
+  String productIdentifier;
  
 
   loadCurrentUserListings() async{
     var snap = await FirebaseFirestore.instance.collection('Listings')
         .where('uid', isEqualTo: FirebaseAuth.instance.currentUser.uid).get();
+    setState(() {
+      
+      listings.clear();
+    });
     snap.docs.forEach((doc) {
       setState(() {
         listings.add(Listing.fromJson(doc.data()));
@@ -51,10 +61,128 @@ class _FeaturedCardState extends State<FeaturedCard> {
      });
   }
 
+  promoteListing(Listing listing) async {
+    
+    var expirationTime  = Timestamp.fromDate(DateTime.now().add(Duration(hours: 72)));
+    await FirebaseFirestore.instance.collection(widget.slider).add({
+      ...listing.toJson(),
+      'expirationTime': expirationTime
+    });
+  }
+
+  setupPurchases() async {
+    PurchaserInfo purchaserInfo;
+    try {
+      purchaserInfo = await Purchases.getPurchaserInfo();
+      // print(_purchaserInfo.entitlements);
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+    Offerings offerings;
+    // try {
+    //   var products = await Purchases.getProducts(['premium_ad_test'], type: PurchaseType.inapp);
+    //   if(products.isNotEmpty){
+    //     print("premium ad: $products");
+    //   }
+    //   offerings = await Purchases.getOfferings();
+    //   if (offerings.current != null) {
+    //     // Display current offering with offerings.current
+    //     Offering offer  = offerings.all['test_offering'];
+    //     if(offer!=null){
+    //       if (!mounted) return;
+    //       setState(() {
+    //         _offer = offer;
+    //         _package = offer.getPackage('tokens-10');
+    //       });
+    //     }
+    // }
+    // } on PlatformException catch (e) {
+    //   print(e);
+    // }
+    if (!mounted) return;
+    
+    setState(() {
+      _purchaserInfo = purchaserInfo;
+      // _offerings = offerings;
+    });
+    // print(_purchaserInfo);
+  
+  }
+
+  buy(BuildContext context) async {
+    var selectedListing = listings.where((listing) => listing.title == listingTitle);
+    if(selectedListing.isNotEmpty){
+
+      try {
+        PurchaserInfo purchaserInfo = await Purchases.purchaseProduct(productIdentifier, type: PurchaseType.inapp);
+        setState(() {
+          isLoading = true;
+        });
+        await promoteListing(selectedListing.first);
+        setState(() {
+          isLoading = false;
+        });
+        showDialog(context: context,
+          builder: (_) => AlertDialog(
+            content: Text("Listing Promoted Successfully"),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: (){
+                  Navigator.of(_).pop();
+                  Navigator.of(context).pop();
+                }, 
+                child: Text("Ok")
+              )
+            ],
+          )
+        );
+        print("Bought tokens successfully");
+      } on PlatformException catch (e) {
+        var errorCode = PurchasesErrorHelper.getErrorCode(e);
+        if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+          // showSnackbar(e);
+          showDialog(context: context,
+          builder: (_) => AlertDialog(
+            content: Text("Purchase was cancelled"),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: (){
+                  Navigator.of(_).pop();
+                  Navigator.of(context).pop();
+                }, 
+                child: Text("Ok")
+              )
+            ],
+          )
+        );
+          print("Error $e");             
+        } else{
+           showDialog(context: context,
+          builder: (_) => AlertDialog(
+            content: Text("an error occurred"),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: (){
+                  Navigator.of(_).pop();
+                  Navigator.of(context).pop();
+                }, 
+                child: Text("Ok")
+              )
+            ],
+          )
+        );
+        }
+      }
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
-    // loadCurrentUserListings();
+    loadCurrentUserListings();
+    setupPurchases();
+    productIdentifier = 'premium_ad_test';
     super.initState();
   }
 
@@ -62,69 +190,81 @@ class _FeaturedCardState extends State<FeaturedCard> {
     await loadCurrentUserListings();
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      // isScrollControlled: true,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Container(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 30),
-            child: Column(
-              children: [
-                Text("Promote", style: Theme.of(context).textTheme.headline4,),
-                SizedBox(height: 20),
-                // dropDown(
-                //   // focusNode: focusNodes['contactOption'],
-                //   hint: "Slider", 
-                //   value: slider,
-                //   items: ["Premium", "Services"],
-                //   onChanged: (item) {
-                //       setState(() {
-                //         slider = item;
-                //       });
-                      
-                    
-                //   },
-                // ),
-                // SizedBox(height: 10),
-                dropDown(
-                  // focusNode: focusNodes['contactOption'],
-                  hint: "Listing", 
-                  value: listingTitle,
-                  items: listings.map((listing) => listing.title).toList(),
-                  onChanged: (item) {
-                      setState(() {
-                        listingTitle = item;
-                      });
-                      
-                    
-                  },
-                ),
-                // CupertinoTextField(
-                //   // controller: _commentController,
-                //   minLines: 3,
-                //   maxLines: 5,
-                //   maxLength: 200,
-                //   placeholder: "Comment",
-                //   keyboardType: TextInputType.multiline,
-                // ),
-                submitButton(
-                    hint: "Promote",
-                    isLoading: isLoading,
-                    onSubmit: 
-                      (){
+        return StatefulBuilder(
+          builder: (context, newState) {
+            return SingleChildScrollView(
+              child: Container(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 30),
+                child: Column(
+                  children: [
+                    Text("Promote", style: Theme.of(context).textTheme.headline4,),
+                    SizedBox(height: 20),
+                    // dropDown(
+                    //   // focusNode: focusNodes['contactOption'],
+                    //   hint: "Slider", 
+                    //   value: slider,
+                    //   items: ["Premium", "Services"],
+                    //   onChanged: (item) {
+                    //       setState(() {
+                    //         slider = item;
+                    //       });
+                          
                         
-                        print("Promoted");
+                    //   },
+                    // ),
+                    // SizedBox(height: 10),
+                    dropDown(
+                      // focusNode: focusNodes['contactOption'],
+                      hint: "Listing", 
+                      value: listingTitle,
+                      items: listings.map((listing) => listing.title).toList(),
+                      onChanged: (item) {
+                          newState(() {
+                            listingTitle = item;
+                          });
+                          
                         
-                        Navigator.of(context).pop();
                       },
-                    context: context
-                 )
-              ],
-            ),
-          ),
-        ));
+                    ),
+                    // CupertinoTextField(
+                    //   // controller: _commentController,
+                    //   minLines: 3,
+                    //   maxLines: 5,
+                    //   maxLength: 200,
+                    //   placeholder: "Comment",
+                    //   keyboardType: TextInputType.multiline,
+                    // ),
+                    submitButton(
+                        hint: "Promote",
+                        isLoading: isLoading,
+                        onSubmit: 
+                          () async {
+                            newState((){
+                              isLoading=true;
+                            });
+                            await buy(context);
+                            if(mounted){
+                              newState((){
+                              isLoading=false;
+                            });
+                            }
+                              print("Promoted");
+                            
+                            // Navigator.of(context).pop();
+                          },
+                        context: context
+                     )
+                  ],
+                ),
+              ),
+            ));
+          }
+        );
     });
     // showModalBottomSheet(
     //   context: context,
@@ -192,8 +332,25 @@ class _FeaturedCardState extends State<FeaturedCard> {
       borderRadius: BorderRadius.circular(12)
     ),
     child: InkWell(
-      onTap: (){
+      onTap: () async {
+        await loadCurrentUserListings();
         print("tapped");
+        if(listings.isEmpty){
+          showDialog(context: context,
+                      builder: (_) => AlertDialog(
+                        content: Text("You don't have any listings"),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.of(_).pop();
+                            }, 
+                            child: Text("Ok")
+                          )
+                        ],
+                      )
+                    );
+                    return;
+        }
         _bottomSheet(context);
         // Navigator.of(context).push(MaterialPageRoute(builder: (_) => DetailsScreen(listing: widget.listing, pageTag: widget.pageTag,)));
       },

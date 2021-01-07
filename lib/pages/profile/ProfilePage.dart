@@ -32,10 +32,20 @@ with TickerProviderStateMixin{
     var snap = await FirebaseFirestore.instance.collection('Listings')
         .where('uid', isEqualTo: widget.fromHome ? 
             FirebaseAuth.instance.currentUser.uid : widget.uid).get();
+        listings.clear();
     snap.docs.forEach((doc) {
       setState(() {
         listings.add(Listing.fromJson(doc.data()));
       });
+     });
+     setState(() {  
+      listings.sort(
+            (a, b) {
+              Timestamp aDate = a.createdAt;
+              Timestamp bDate = b.createdAt;
+              return bDate.compareTo(aDate);
+            }
+        );
      });
     // setState(() {
       
@@ -47,6 +57,10 @@ with TickerProviderStateMixin{
     setState(() {
       user = temp;
     });
+  }
+  Future<void> _onRefresh() async{
+    await loadListings();
+    return;
   }
   @override
   void initState() {
@@ -104,31 +118,39 @@ with TickerProviderStateMixin{
                             child: TabBarView(
                               controller: _tabController,
                               children: [
-                                listings.isEmpty ? Center(child: Text("No listings found")) : GridView.count(
-                                  crossAxisCount: orientation == Orientation.portrait ? 2 : 6,
-                                  
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 10,
-                                  shrinkWrap: true,
-                                  //itemCount: listings.length,
-                                  childAspectRatio: 1,
-                                  scrollDirection: Axis.vertical,
-                                  // // itemBuilder: (context, index){
-                                  //   return ProductCard(listing: listings[index]);
-                                  // }
-                                  children: [
+                                listings.isEmpty ? 
+                                  RefreshIndicator(
+                                    child: Center(child: Text("No listings found")),
+                                    onRefresh: _onRefresh,
+                                  ) : 
+                                  RefreshIndicator(
+                                    onRefresh: _onRefresh,
+                                    child: GridView.count(
+                                    crossAxisCount: orientation == Orientation.portrait ? 2 : 6,
                                     
-                                    ...listings.map((value) {
-                                        return ListingCard(
-                                          listing: value, 
-                                          pageTag: "Profile", 
-                                          showMenu: value.uid == currentUser.uid,
-                                          aspectRatioImage:orientation == Orientation.portrait ? 1.35 : 1.5,
-                                          fontSizeMultiple: orientation == Orientation.portrait ? 1 : 2,
-                                        );
-                                    }).toList(),
-                                  ],
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10,
+                                    shrinkWrap: true,
+                                    //itemCount: listings.length,
+                                    childAspectRatio: 1,
+                                    scrollDirection: Axis.vertical,
+                                    // // itemBuilder: (context, index){
+                                    //   return ProductCard(listing: listings[index]);
+                                    // }
+                                    children: [
+                                      
+                                      ...listings.map((value) {
+                                          return ListingCard(
+                                            listing: value, 
+                                            pageTag: "Profile", 
+                                            showMenu: value.uid == currentUser.uid,
+                                            aspectRatioImage:orientation == Orientation.portrait ? 1.35 : 1.5,
+                                            fontSizeMultiple: orientation == Orientation.portrait ? 1 : 2,
+                                          );
+                                      }).toList(),
+                                    ],
                                 ),
+                                  ),
                                 Flex(
                                   direction: Axis.vertical,
                                   children: [FeedbackPage(uid: widget.fromHome ? FirebaseAuth.instance.currentUser.uid : widget.uid, scaffoldKey: _scaffoldKey,)]

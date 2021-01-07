@@ -1,3 +1,4 @@
+import 'package:Tyangi/models/Category.dart';
 import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/widgets/Inputs.dart';
 import 'package:Tyangi/utitlities/firebase.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 class AddListing extends StatefulWidget {
   @override
@@ -22,7 +24,8 @@ class _AddListingState extends State<AddListing> {
   String subCategory;
   String condition;
   String contactOption;
-  List<String> categories = List();
+  List<Category> categories = List();
+  Category selectedCategory;
   List<dynamic> subCategories = List();
   List<Asset> images = List<Asset>();
   String _error;
@@ -240,6 +243,10 @@ class _AddListingState extends State<AddListing> {
         setState(() {
           isLoading = true;
         });
+        if(selectedCategory.isPaid){
+          PurchaserInfo purchaserInfo = await Purchases.purchaseProduct(selectedCategory.productIdentifier, type: PurchaseType.inapp);
+          print("Bought tokens successfully");
+        }
         // print(imagesURL);
         String listingId;
         if(autoRepost){
@@ -275,13 +282,25 @@ class _AddListingState extends State<AddListing> {
         
         // print("reference"+docRef);
         // print(imagesURL);
-        setState(() {
-          isLoading=false;
-        });
         if(mounted){
+          setState(() {
+            isLoading=false;
+          });
           showSnackBar("Listing posted");
         }
         Navigator.of(context).pop();
+      } on PlatformException catch (e) {
+        var errorCode = PurchasesErrorHelper.getErrorCode(e);
+        if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+          showSnackBar("Purchase was cancelled");
+        } else {
+          showSnackBar("an error occured");
+        }
+        if(mounted){
+          setState(() {
+            isLoading = false;
+          });
+        }
       } catch(e){
         showSnackBar("an error occured");
         setState(() {
@@ -449,10 +468,11 @@ class _AddListingState extends State<AddListing> {
                           focusNode: focusNodes['category'],
                           hint: "Category", 
                           value: category,
-                          items: categories,
+                          items: categories.map((e) => e.name).toList(),
                           onChanged: (item) {
                               setState(() {
                                 category = item;
+                                selectedCategory = categories.singleWhere((element) => element.name == item);
                               });
                               loadSubCategories();
                             

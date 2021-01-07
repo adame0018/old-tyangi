@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ffi';
 
+import 'package:Tyangi/models/Category.dart';
 import 'package:Tyangi/models/Listing.dart';
 import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/pages/addListing.dart';
@@ -25,7 +26,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   User user;
   AppUser currentUser;
-  List<String> categories = List<String>();
+  List<Category> categories = List<Category>();
   List<Listing> featuredListings = List<Listing>();
   double radius = 50*1.6;
   bool isSlider = false;
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> loadCategories() async {
     
-     List<String> tempCategories = await getCategories();
+     List<Category> tempCategories = await getCategories();
      setState(() {
        categories.clear();
        categories.addAll(tempCategories);
