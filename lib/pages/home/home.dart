@@ -210,8 +210,10 @@ class _HomeState extends State<Home> {
               CupertinoPageRoute(builder: (_)=>AddListing())
             );
           },
-          child: Icon(Icons.add),
-          
+          child: ImageIcon(
+            AssetImage('assets/icons/add.png'),
+          ),
+          tooltip: "Add Listing", 
             
           
         ),
@@ -238,45 +240,67 @@ class _HomeState extends State<Home> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  IconButton(icon: Icon(
-                    Icons.home,
-                    color: _selectedPage == 0 ? Colors.blue : Colors.black,
-                    ), 
+                  Transform.scale(
+                    scale: 0.8,
+                    child: IconButton(
+                      icon: Image.asset(
+                        'assets/icons/home.png',
+                        color: _selectedPage == 0 ? Colors.blue : Colors.black,
+                        filterQuality: FilterQuality.high,
+                      ),
+                      focusColor: Colors.blue,
+                      iconSize: 10,
+                      onPressed: () {
+                        setState((){
+                          _selectedPage = 0;
+                        });
+                      },
+                      highlightColor: Colors.blue,
+                    ),
+                  ),
+                  Transform.scale(
+                    scale: 0.8,
+                    child: IconButton(
+                      icon: Image.asset(
+                        'assets/icons/user.png',
+                        color: _selectedPage == 1 ? Colors.blue : Colors.black, 
+                        filterQuality: FilterQuality.high,
+                      ),
+                      onPressed: () {
+                      setState((){
+                        _selectedPage = 1;
+                      });
+                    }),
+                  ),
+                  SizedBox(width: 40), // The dummy child
+                  Transform.scale(
+                    scale: 0.8,
+                    child: IconButton(
+                      icon: Image.asset(
+                        'assets/icons/conversation.png',
+                        color: _selectedPage == 2 ? Colors.blue : Colors.black, 
+                        filterQuality: FilterQuality.high,
+                      ),
                     onPressed: () {
                       setState((){
-                        _selectedPage = 0;
+                        _selectedPage = 2;
                       });
-                    },
-                    highlightColor: Colors.blue,
+                    }),
                   ),
-                  IconButton(icon: Icon(
-                      Icons.person,
-                      color: _selectedPage == 1 ? Colors.blue : Colors.black,
-                      ), 
+                  Transform.scale(
+                    scale: 0.8,
+                    child: IconButton(
+                      icon: Image.asset(
+                        'assets/icons/settings.png',
+                      color: _selectedPage == 3 ? Colors.blue : Colors.black,   
+                      filterQuality: FilterQuality.high,
+                      ),
                     onPressed: () {
-                    setState((){
-                      _selectedPage = 1;
-                    });
-                  }),
-                  SizedBox(width: 40), // The dummy child
-                  IconButton(icon: Icon(
-                    Icons.message,
-                    color: _selectedPage == 2 ? Colors.blue : Colors.black,
-                    ), 
-                  onPressed: () {
-                    setState((){
-                      _selectedPage = 2;
-                    });
-                  }),
-                  IconButton(icon: Icon(
-                    Icons.menu,
-                    color: _selectedPage == 3 ? Colors.blue : Colors.black,
-                    ), 
-                  onPressed: () {
-                    setState((){
-                      _selectedPage = 3;
-                    });
-                  }),
+                      setState((){
+                        _selectedPage = 3;
+                      });
+                    }),
+                  ),
                 ],
               ),
             )

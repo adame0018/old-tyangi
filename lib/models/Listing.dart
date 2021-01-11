@@ -6,6 +6,7 @@ class Listing {
   bool autoRepost;
   List<dynamic> images;
   Timestamp createdAt, repostAt;
+  Map<String, dynamic> position;
 
   Listing({
     @required this.id,
@@ -21,7 +22,8 @@ class Listing {
     @required this.createdAt,
     @required this.repostAt,
     @required this.contactOption,
-    @required this.condition
+    @required this.condition,
+    @required this.position
   });
 
   Listing.fromJson(Map<String, dynamic> map){
@@ -41,6 +43,7 @@ class Listing {
     repostAt = map['repostAt'];
     contactOption = map['contactOption'];
     condition = map['condition'];
+    position = map['position'];
     if(map['images'] != null){
       images = List<dynamic>();
       images.addAll(map['images']);
@@ -63,7 +66,8 @@ class Listing {
       'createdAt': createdAt,
       'repostAt': repostAt,
       'contactOption': contactOption,
-      'condition': condition
+      'condition': condition,
+      'position': position
     };
   }
   

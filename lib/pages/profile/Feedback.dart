@@ -39,7 +39,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
     var snapReviews = await FirebaseFirestore.instance.collection('Users/${widget.uid}/ratings').where('userId',isEqualTo: FirebaseAuth.instance.currentUser.uid).get();
     var snapChats = await FirebaseFirestore.instance.collection('Users/${widget.uid}/Chats').doc(FirebaseAuth.instance.currentUser.uid).get();
     if(snapReviews.size==0 && snapChats.exists){
-      print("can review");
       setState(() {
         canReview = true;
       });
@@ -89,7 +88,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                       color: Colors.amber,
                     ),
                     onRatingUpdate: (thisRating) {
-                      print(thisRating);
                       setState(() {
                         rating = thisRating;
                       });
@@ -121,7 +119,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
                           return;
                         }
                         print("submitting rating");
-                        print(rating);
                         // setState(() {
                         //   isLoading = true;
                         // });

@@ -112,7 +112,6 @@ class _ListingsBySubCategoryState extends State<ListingsBySubCategory> {
             scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $isLoading");
         isLoading = true;
 
         if (isLoading) {

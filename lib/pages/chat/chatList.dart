@@ -142,7 +142,6 @@ class ChatListState extends State<ChatList> {
     var platformChannelSpecifics = new NotificationDetails(
         android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
 
-    print(message);
    print(message['body'].toString());
    print(json.encode(message));
    
@@ -327,7 +326,6 @@ class ChatListState extends State<ChatList> {
                     ),
                   );
                 } else {
-                  print("chat exists");
                   print(snapshot.hasData);
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),

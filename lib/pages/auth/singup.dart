@@ -327,7 +327,6 @@ class _SignUpState extends State<SignUp> {
     //   Coordinates(_locationData.latitude, _locationData.longitude)
     //   );
     var results = await geocoding.placemarkFromCoordinates(_locationData.latitude, _locationData.longitude);
-    print("results"+results[0].country);
     if(results[0].postalCode.isNotEmpty && results[0].postalCode != null){
 
       setState(() {

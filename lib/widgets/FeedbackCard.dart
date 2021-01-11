@@ -33,8 +33,6 @@ class FeedbackCard extends StatelessWidget {
       builder: (context, snapshot) {
         
         if(snapshot.connectionState == ConnectionState.done && snapshot.hasData){
-          print("name: ");
-        print(snapshot.data.uid);
         return Card(
               shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12)

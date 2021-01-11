@@ -17,5 +17,4 @@ getZipCodes() async{
         }
 
       });
-    print(zipCodes);
 }

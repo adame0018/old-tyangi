@@ -84,7 +84,6 @@ class _AddListingState extends State<AddListing> {
       categories.addAll(tempCategories);
     });
     
-    print(categories);
     
   }
 
@@ -123,7 +122,6 @@ class _AddListingState extends State<AddListing> {
      var tempSubCategories;
      tempSubCategories = await getSubCategories(category);
       setState(() {
-        print(tempSubCategories);
         subCategories.clear();
         subCategories.addAll(tempSubCategories);
       });
@@ -245,7 +243,6 @@ class _AddListingState extends State<AddListing> {
         });
         if(selectedCategory.isPaid){
           PurchaserInfo purchaserInfo = await Purchases.purchaseProduct(selectedCategory.productIdentifier, type: PurchaseType.inapp);
-          print("Bought tokens successfully");
         }
         // print(imagesURL);
         String listingId;
@@ -271,7 +268,6 @@ class _AddListingState extends State<AddListing> {
             zipCode: _locationController.text
           );
         }
-        print(listingId);
         List<String> imagesURL = await saveImage(images, listingId);
         
           

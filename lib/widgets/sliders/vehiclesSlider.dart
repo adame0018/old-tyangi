@@ -10,8 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../utitlities/sizeConfig.dart';
 import '../../models/Listing.dart';
 
-class ServicesSlider extends StatefulWidget {
-  ServicesSlider({
+class VehiclesSlider extends StatefulWidget {
+  VehiclesSlider({
     // @required this.listings,
     @required this.title,
     @required this.orientation
@@ -21,10 +21,10 @@ class ServicesSlider extends StatefulWidget {
   final Orientation orientation;
 
   @override
-  _ServicesSliderState createState() => _ServicesSliderState();
+  _VehiclesSliderState createState() => _VehiclesSliderState();
 }
 
-class _ServicesSliderState extends State<ServicesSlider> {
+class _VehiclesSliderState extends State<VehiclesSlider> {
   List<dynamic> listings = List<dynamic>();
   AppUser user;
   Stream stream;
@@ -34,7 +34,7 @@ class _ServicesSliderState extends State<ServicesSlider> {
     setState(() {
       user = temp;
     });
-    var collectionRef = FirebaseFirestore.instance.collection('ServicesSlider');
+    var collectionRef = FirebaseFirestore.instance.collection('VehiclesSlider');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     double radius = prefs.getDouble('radius') ?? 50*1.6;
     GeoFirePoint center = Geoflutterfire().point(latitude: user.position['geopoint'].latitude, longitude: user.position['geopoint'].longitude);
@@ -47,7 +47,7 @@ class _ServicesSliderState extends State<ServicesSlider> {
   List<Widget> getFeaturedCards(int length){
     List<Widget> cards = List<Widget>();
     for(int i=0; i<9-length; i++){
-                  cards.add(FeaturedCard(pageTag: "ServicesSlider$i", slider: "ServicesSlider",));
+                  cards.add(FeaturedCard(pageTag: "VehiclesSlider$i", slider: "VehiclesSlider",));
                 }
     return cards;
   }
@@ -91,7 +91,7 @@ class _ServicesSliderState extends State<ServicesSlider> {
                       return ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          ...snapshot.data.map((listing) => ListingCard(pageTag: "ServicesSlider", listing: Listing.fromJson(listing.data()))).toList(),
+                          ...snapshot.data.map((listing) => ListingCard(pageTag: "VehiclesSlider", listing: Listing.fromJson(listing.data()))).toList(),
                           ...getFeaturedCards(snapshot.data.length)
 
                         ]

@@ -110,8 +110,10 @@ class _EditProfileState extends State<EditProfile> {
       });
     }
     if(locationController.text != user.zipCode){
+      var geoPoint = await getGeoPointFromZip(locationController.text);
       await FirebaseFirestore.instance.collection('Users').doc(user.uid).update({
-        'zipCode': locationController.text
+        'zipCode': locationController.text,
+        'position': geoPoint.data
       });
     }
     if(mounted){
@@ -126,6 +128,7 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     var _height = MediaQuery.of(context).size.height;
     return Scaffold(
+      key: _key,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,

@@ -8,7 +8,7 @@ import 'package:Tyangi/utitlities/sizeConfig.dart';
 import 'package:Tyangi/widgets/InfiniteGridView.dart';
 import 'package:Tyangi/widgets/sliders/premiumSlider.dart';
 import 'package:Tyangi/widgets/sliders/servicesSlider.dart';
-import 'package:Tyangi/widgets/sliders/vehicledSlider.dart';
+import 'package:Tyangi/widgets/sliders/vehiclesSlider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -99,7 +99,6 @@ class _BodyState extends State<Body> {
             scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $isLoading");
         isLoading = true;
 
         if (isLoading) {
@@ -153,8 +152,6 @@ class _BodyState extends State<Body> {
     return StreamBuilder<List<DocumentSnapshot>>(
               stream: stream,
               builder: (context, snapshot) {
-                print("snapshit");
-                print(snapshot.hasData);
                 if(snapshot.hasData){
                   
                   snapshot.data.sort(

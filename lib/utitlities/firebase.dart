@@ -195,9 +195,6 @@ Future<AppUser> getCurrentUser() async {
 Future<AppUser> getUserFromId(String uid) async {
 
   var snapshot = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-  print("asnda");
-  print(snapshot.exists);
-  print(snapshot.data());
   var user = AppUser.fromJson(snapshot.data());
   return user;
 }

@@ -121,26 +121,10 @@ class CategoryCard extends StatelessWidget {
             // width: _width/4.8,
             child: Column(
               children: [
-                Container(
-                  
-                  padding: EdgeInsets.all(orientation == Orientation.portrait ? _height/50 : _height/25),
-                  // height: getProportionateScreenWidth(55),
-                  // width: getProportionateScreenWidth(55),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor.withAlpha(100),
-                      width: 2.0
-                    ),
-                    // color: Theme.of(context).primaryColor.withAlpha(100),
-                    // borderRadius: BorderRadius.circular(10),
-                    shape: BoxShape.circle
-                  ),
-                  child: Center(
-                    child: Icon(
-                      CupertinoIcons.car_detailed,
-                      color: Theme.of(context).primaryColor,),
-                  )
-                ),
+                IconButton(
+                      onPressed: press,
+                      icon: Image.asset('assets/icons/$text.png'),
+                      splashColor: Theme.of(context).primaryColor,),
                 SizedBox(height: 5),
                 Flexible(
                     child: Text(text, 

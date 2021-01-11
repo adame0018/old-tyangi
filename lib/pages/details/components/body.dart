@@ -40,7 +40,6 @@ class _BodyState extends State<Body> {
     String currentUser =  FirebaseAuth.instance.currentUser.uid;
     var chat = await FirebaseFirestore.instance.collection('Users/$currentUser/Chats').doc(peerId).get();
     if(chat.exists){
-      print("it exists");
       var peerUser = await getUserFromId(peerId);
       Navigator.of(context).push(
         MaterialPageRoute(

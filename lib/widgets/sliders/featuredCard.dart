@@ -45,11 +45,19 @@ class _FeaturedCardState extends State<FeaturedCard> {
   Package _package;
   PurchaserInfo _purchaserInfo;
   String productIdentifier;
+  String category;
  
 
   loadCurrentUserListings() async{
-    var snap = await FirebaseFirestore.instance.collection('Listings')
-        .where('uid', isEqualTo: FirebaseAuth.instance.currentUser.uid).get();
+    var snap;
+    if(widget.slider!="PremiumSlider"){
+      snap = await FirebaseFirestore.instance.collection('Listings')
+        .where('uid', isEqualTo: FirebaseAuth.instance.currentUser.uid).where('category', isEqualTo: widget.slider.substring(0, widget.slider.indexOf('Slider'))).get();
+    } else{
+      snap = await FirebaseFirestore.instance.collection('Listings')
+          .where('uid', isEqualTo: FirebaseAuth.instance.currentUser.uid).get();
+    }
+    if(!mounted) return;
     setState(() {
       
       listings.clear();
@@ -80,26 +88,7 @@ class _FeaturedCardState extends State<FeaturedCard> {
     }
 
     Offerings offerings;
-    // try {
-    //   var products = await Purchases.getProducts(['premium_ad_test'], type: PurchaseType.inapp);
-    //   if(products.isNotEmpty){
-    //     print("premium ad: $products");
-    //   }
-    //   offerings = await Purchases.getOfferings();
-    //   if (offerings.current != null) {
-    //     // Display current offering with offerings.current
-    //     Offering offer  = offerings.all['test_offering'];
-    //     if(offer!=null){
-    //       if (!mounted) return;
-    //       setState(() {
-    //         _offer = offer;
-    //         _package = offer.getPackage('tokens-10');
-    //       });
-    //     }
-    // }
-    // } on PlatformException catch (e) {
-    //   print(e);
-    // }
+
     if (!mounted) return;
     
     setState(() {
@@ -116,10 +105,12 @@ class _FeaturedCardState extends State<FeaturedCard> {
 
       try {
         PurchaserInfo purchaserInfo = await Purchases.purchaseProduct(productIdentifier, type: PurchaseType.inapp);
+        if(!mounted) return;
         setState(() {
           isLoading = true;
         });
         await promoteListing(selectedListing.first);
+        if(!mounted) return;
         setState(() {
           isLoading = false;
         });
@@ -183,6 +174,11 @@ class _FeaturedCardState extends State<FeaturedCard> {
     loadCurrentUserListings();
     setupPurchases();
     productIdentifier = 'premium_ad_test';
+    if(widget.slider!="PremiumSlider"){
+      category = widget.slider.substring(0, widget.slider.indexOf('Slider'));
+    } else{
+      category = '';
+    }
     super.initState();
   }
 
@@ -204,22 +200,8 @@ class _FeaturedCardState extends State<FeaturedCard> {
                   children: [
                     Text("Promote", style: Theme.of(context).textTheme.headline4,),
                     SizedBox(height: 20),
-                    // dropDown(
-                    //   // focusNode: focusNodes['contactOption'],
-                    //   hint: "Slider", 
-                    //   value: slider,
-                    //   items: ["Premium", "Services"],
-                    //   onChanged: (item) {
-                    //       setState(() {
-                    //         slider = item;
-                    //       });
-                          
-                        
-                    //   },
-                    // ),
-                    // SizedBox(height: 10),
+
                     dropDown(
-                      // focusNode: focusNodes['contactOption'],
                       hint: "Listing", 
                       value: listingTitle,
                       items: listings.map((listing) => listing.title).toList(),
@@ -231,14 +213,7 @@ class _FeaturedCardState extends State<FeaturedCard> {
                         
                       },
                     ),
-                    // CupertinoTextField(
-                    //   // controller: _commentController,
-                    //   minLines: 3,
-                    //   maxLines: 5,
-                    //   maxLength: 200,
-                    //   placeholder: "Comment",
-                    //   keyboardType: TextInputType.multiline,
-                    // ),
+
                     submitButton(
                         hint: "Promote",
                         isLoading: isLoading,
@@ -266,59 +241,6 @@ class _FeaturedCardState extends State<FeaturedCard> {
           }
         );
     });
-    // showModalBottomSheet(
-    //   context: context,
-    //   isScrollControlled: true, 
-    //   builder: (_) {
-    //     return SingleChildScrollView(
-    //       child: Container(
-    //         padding: EdgeInsets.only(
-    //                 bottom: MediaQuery.of(context).viewInsets.bottom),
-    //         child: Column(
-    //           mainAxisSize: MainAxisSize.min,
-    //           children: [
-    //             Text("Leave a Feedback", style: Theme.of(context).textTheme.headline4,),
-    //             SizedBox(height: 30),
-    //             RatingBar.builder(
-    //               initialRating: 3,
-    //               minRating: 1,
-    //               direction: Axis.horizontal,
-    //               allowHalfRating: true,
-    //               itemCount: 5,
-    //               itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-    //               itemSize:   30,
-    //               itemBuilder: (context, _) => Icon(
-    //                 Icons.star,
-    //                 color: Colors.amber,
-    //               ),
-    //               onRatingUpdate: (rating) {
-    //                 print(rating);
-    //               },
-    //             ),
-    //             SizedBox(height: 20),
-    //             Padding(
-    //               padding: EdgeInsets.only(
-    //                   bottom: MediaQuery.of(context).viewInsets.bottom),
-    //               child: TextField()
-    //               //richEntryField("Comment", minLines: 3, maxLines: 5),
-    //             ),
-    //             SizedBox(height: 30),
-    //             submitButton(
-    //               hint: "Submit",
-    //               onSubmit: (){},
-    //               context: context
-    //             )
-    //             // FlatButton(
-    //             //   onPressed: (){},
-    //             //   child: Text("Submit"),
-    //             //   color: Theme.of(context).primaryColor,
-    //             // )
-    //           ]
-    //         ),
-    //       ),
-    //     );
-    //   }
-    // );
   }
   
   @override
@@ -337,19 +259,19 @@ class _FeaturedCardState extends State<FeaturedCard> {
         print("tapped");
         if(listings.isEmpty){
           showDialog(context: context,
-                      builder: (_) => AlertDialog(
-                        content: Text("You don't have any listings"),
-                        actions: <Widget>[
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.of(_).pop();
-                            }, 
-                            child: Text("Ok")
-                          )
-                        ],
-                      )
-                    );
-                    return;
+              builder: (_) => AlertDialog(
+                content: Text("You don't have any $category listings"),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.of(_).pop();
+                    }, 
+                    child: Text("Ok")
+                  )
+                ],
+              )
+            );
+            return;
         }
         _bottomSheet(context);
         // Navigator.of(context).push(MaterialPageRoute(builder: (_) => DetailsScreen(listing: widget.listing, pageTag: widget.pageTag,)));
@@ -393,60 +315,7 @@ class _FeaturedCardState extends State<FeaturedCard> {
                           ),
                   ),
                 ),
-                // Row(
-                //   children: [
-                //     Icon(Icons.location_on_outlined, size: _height/70,),
-                //     Text("location", 
-                //       style: TextStyle(
-                //           fontSize: (_height/70)*widget.fontSizeMultiple
-                //         )
-                //       )
-                //   ],
-                // )
-            //   ],
-            // )
           ),
-          // Positioned(
-          //   top: 0,
-          //   right: 0,
-          //   child: Container(
-          //           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          //           decoration: BoxDecoration(
-          //             borderRadius: BorderRadius.circular(10),
-          //             color: Colors.grey.withAlpha(180),
-          //           ),
-          //           child: Text("\$"+widget.listing.price, style: TextStyle(color: Colors.white, fontSize: (_height/50)*widget.fontSizeMultiple),)
-          //         ),
-          // ),
-          // if (widget.showMenu)
-          // Positioned(
-          //   bottom: 0,
-          //   right: 0,
-          //   child: PopupMenuButton<String>(
-          //               onSelected: (value){
-          //                 handleSelect(value);
-          //               },
-          //               itemBuilder: (context){
-          //                 return ListingCard.menuChoices.map(
-          //                   (choice) {
-          //                     // bool enabled = true;
-          //                     // if(choice == 'Renew'){
-          //                     //   if(Timestamp.now().toDate().difference(widget.listing.createdAt.toDate()).inHours >= 6){
-          //                     //     enabled = true;
-          //                     //   } else {
-          //                     //     enabled = false;
-          //                     //   }
-          //                     // }
-          //                     return PopupMenuItem<String>(
-          //                       value: choice,
-          //                       child: Text(choice),
-          //                       enabled: choice == 'Renew' ? enableRenew : true,
-          //                     );
-          //                   }
-          //                 ).toList();
-          //               }
-          //             ),
-          // ),
 
         ]
       ),
