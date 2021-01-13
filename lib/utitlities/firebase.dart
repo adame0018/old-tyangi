@@ -246,18 +246,7 @@ Stream<List<Rating>> getFeedbackForUser(String uid) {
     );
 }
 
-// Future<List<Listing>> getListingsWithLimit() async{
-//   List<Listing> listings = List<Listing>();
-//   // await FirebaseFirestore.instance.collection('Listings').get().then(
-//   //   (value) => value.docs.forEach(
-//   //     (doc) {
-//   //         listings.add(new Listing.fromJson(doc.data()));
-//   //      })
-//   // );
-//   // return listings;
-//   var documents = await FirebaseFirestore.instance.collection('Listings').get();
-//   documents.docs.forEach((doc) async {
-//     listings.add(new Listing.fromJson(doc.data()));
-//   });
-//   return listings;
-// }
+Future<List<QueryDocumentSnapshot>> getRepostTokenPackages() async {
+  var snap = await FirebaseFirestore.instance.collection('RepostTokenPackages').get();
+  return snap.docs;
+}

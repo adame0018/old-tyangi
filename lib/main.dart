@@ -75,10 +75,12 @@ class _MyAppState extends State<MyApp> {
                   SizeConfig().init(context);
                   // print(FirebaseAuth.instance.currentUser);
                   if(snap.hasData){
-                    Purchases.identify(snap.data.uid);
-                    Purchases.setEmail(snap.data.email);
-                    Purchases.setDisplayName(snap.data.displayName);
-                    return Home();
+                    return FutureBuilder<Object>(
+                      future: Future.wait([Purchases.identify(snap.data.uid), Purchases.setEmail(snap.data.email)]),
+                      builder: (context, snapshot) {
+                        return Home();
+                      }
+                    );
                   } else if (snap.connectionState == ConnectionState.waiting){
                     return Scaffold(body: Center(child: CircularProgressIndicator()));
                   }
