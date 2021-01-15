@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
           if(snapshot.hasData)
             return MaterialApp(
               debugShowCheckedModeBanner: false,
-              title: 'Flutter Demo',
+              title: 'Tyangi',
               theme: ThemeData(
                 // This is the theme of your application.
                 //
