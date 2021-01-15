@@ -359,21 +359,16 @@ class _SignUpState extends State<SignUp> {
     });
 
     GeoFirePoint geoPoint;
-    final response = await http.get('http://open.mapquestapi.com/geocoding/v1/address?key=CykCSSAevR7sVckyegrSwJAZI3oTDavz&postalCode=${_locationController.text}&maxResults=1&thumbMaps=false');
-  if (response.statusCode == 200) {
+    // final response = await http.get('http://open.mapquestapi.com/geocoding/v1/address?key=CykCSSAevR7sVckyegrSwJAZI3oTDavz&postalCode=${_locationController.text}&maxResults=1&thumbMaps=false');
+
     // If the server did return a 200 OK response,
     // then parse the JSON.
-    var result = jsonDecode(response.body);
-    var latLong = result['results'][0]['locations'][0]['latLng'];
-    var lat = latLong['lat'];
-    var long = latLong['lng'];
-    geoPoint = Geoflutterfire().point(latitude: lat, longitude: long);
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    showSnackBar("Invalid zipCode");
-    return;
-  }
+    // var result = jsonDecode(response.body);
+    // var latLong = await getLatLongFromZip(_locationController.text);
+    // var lat = latLong['latitude'];
+    // var long = latLong['longitude'];
+    geoPoint = await getGeoPointFromZip(_locationController.text);
+  
     
     
 

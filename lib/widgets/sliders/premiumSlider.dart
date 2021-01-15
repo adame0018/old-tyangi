@@ -47,7 +47,7 @@ class _PremiumSliderState extends State<PremiumSlider> {
   List<Widget> getFeaturedCards(int length){
     List<Widget> cards = List<Widget>();
     for(int i=0; i<9-length; i++){
-                  cards.add(FeaturedCard(pageTag: "PremiumSlider$i", slider: "PremiumSlider",));
+                  cards.add(FeaturedCard(pageTag: "PremiumSlider$i", slider: "PremiumSlider", productIdentifier: "premium_slider",));
                 }
     return cards;
   }
@@ -93,7 +93,12 @@ class _PremiumSliderState extends State<PremiumSlider> {
                       return ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          ...snapshot.data.map((listing) => ListingCard(pageTag: "PremiumSlider", listing: Listing.fromJson(listing.data()))).toList(),
+                          ...snapshot.data.map((listing) => 
+                            ListingCard(
+                              pageTag: "PremiumSlider", 
+                              listing: Listing.fromJson(listing.data()),
+                              showExpiration: true,  
+                            )).toList(),
                           ...getFeaturedCards(snapshot.data.length)
 
                         ]

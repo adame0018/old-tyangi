@@ -11,7 +11,7 @@
     <uses-permission android:name="com.android.vending.BILLING" />
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="TyangiApp"
+        android:label="Tyangi"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -20,6 +20,7 @@ class _PurchaseAutoPostState extends State<PurchaseAutoPost> {
   PurchaserInfo _purchaserInfo;
   String bought = 'not bought';
   GlobalKey<ScaffoldState> _scaffoldKey;
+  bool _isLoading=false;
 
   // setupPurchases() async {
   //   PurchaserInfo purchaserInfo;
@@ -58,23 +59,32 @@ class _PurchaseAutoPostState extends State<PurchaseAutoPost> {
   // }
 
   buy({int quantity, String productIdentifier}) async {
+    if(mounted){
+      setState(() {
+        _isLoading = true;
+      });
+    }
     try {
       PurchaserInfo purchaserInfo = await Purchases.purchaseProduct(productIdentifier, type: PurchaseType.inapp);
       await FirebaseFirestore.instance.collection('Users').doc('${FirebaseAuth.instance.currentUser.uid}').update({
         'repostTokens': user.repostTokens + quantity
       });
-      Purchases.syncPurchases();
       await loadUser();
       showSnackBar("Purchase successful!");
       print("Bought tokens successfully");
     } on PlatformException catch (e) {
       var errorCode = PurchasesErrorHelper.getErrorCode(e);
-      if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+      if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
         showSnackBar("Purchase was cancelled");
         print("Error $e");             
       } else{
-        showSnackBar("An error occured! Purchase was unsuccessful");
+        showSnackBar("${e.message}");
       }
+    }
+    if(mounted){
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
   loadUser() async{
@@ -113,7 +123,8 @@ class _PurchaseAutoPostState extends State<PurchaseAutoPost> {
           if(snapshot.hasData){
 
             return Center(
-              child: ListView.builder(
+              child: _isLoading ? CircularProgressIndicator() : 
+              ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index){
                   var quantity = snapshot.data[index]['quantity'];

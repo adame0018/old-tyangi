@@ -83,9 +83,15 @@ with TickerProviderStateMixin{
 
         return Scaffold(
           key: _scaffoldKey,
-          appBar: CupertinoNavigationBar(
-            middle: Text("Profile")
-          ),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0.5,
+            title: Text(
+              "Profile",
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            centerTitle: true,
+      ),
 
           body: user == null ? Center(child: CircularProgressIndicator()) : 
           OrientationBuilder(

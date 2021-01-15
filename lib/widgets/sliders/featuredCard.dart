@@ -20,13 +20,14 @@ class FeaturedCard extends StatefulWidget {
     this.fontSizeMultiple =1,
     @required this.pageTag,
     @required this.slider,
+    @required this.productIdentifier,
     // @required this.listing,
     this.showMenu = false,
   }) : super(key: key);
 
   final double width, aspectRatioCard, aspectRatioImage, fontSizeMultiple;
   // final Listing listing;
-  final String pageTag, slider;
+  final String pageTag, slider, productIdentifier;
   static const List<String> menuChoices = ["Mark as Sold", "Renew", "Promote"];
   final bool showMenu;
 
@@ -44,7 +45,6 @@ class _FeaturedCardState extends State<FeaturedCard> {
   Offering _offer;
   Package _package;
   PurchaserInfo _purchaserInfo;
-  String productIdentifier;
   String category;
  
 
@@ -104,7 +104,7 @@ class _FeaturedCardState extends State<FeaturedCard> {
     if(selectedListing.isNotEmpty){
 
       try {
-        PurchaserInfo purchaserInfo = await Purchases.purchaseProduct(productIdentifier, type: PurchaseType.inapp);
+        PurchaserInfo purchaserInfo = await Purchases.purchaseProduct(widget.productIdentifier, type: PurchaseType.inapp);
         if(!mounted) return;
         setState(() {
           isLoading = true;
@@ -173,7 +173,6 @@ class _FeaturedCardState extends State<FeaturedCard> {
     // TODO: implement initState
     loadCurrentUserListings();
     setupPurchases();
-    productIdentifier = 'premium_ad_test';
     if(widget.slider!="PremiumSlider"){
       category = widget.slider.substring(0, widget.slider.indexOf('Slider'));
     } else{

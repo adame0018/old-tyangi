@@ -19,7 +19,7 @@ class TopSlider extends StatefulWidget {
 class _TopSliderState extends State<TopSlider> {
 
   PageController controller = PageController();
-
+  int listingCount;
   // loadUser()async{
     
   //   var temp = await getUserFromId(widget.uid);
@@ -28,10 +28,18 @@ class _TopSliderState extends State<TopSlider> {
   //   });
   // }
 
+  loadListingCount() async{
+    var count = await getUserListingCount(widget.user.uid);
+    setState(() {
+      listingCount = count;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     // loadUser();
+    loadListingCount();
     super.initState();
   }
 
@@ -139,7 +147,7 @@ class _TopSliderState extends State<TopSlider> {
                       children: [
                         Text("Listings:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
                         SizedBox(width: 5,),
-                        Text(""),
+                        listingCount!=null ? Text("$listingCount") : Text(""),
                       ],
                     ),
                     SizedBox(

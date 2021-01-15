@@ -5,7 +5,9 @@ import 'package:Tyangi/models/appUser.dart';
 import 'package:Tyangi/models/rating.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Listing.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,19 +59,19 @@ String getZipCodeAPIKey() {
 
 Future<GeoFirePoint> getGeoPointFromZip(String zipCode) async{
   GeoFirePoint geoPoint;
-  final response = await http.get('http://open.mapquestapi.com/geocoding/v1/address?key=${getZipCodeAPIKey()}&postalCode=$zipCode&maxResults=1&thumbMaps=false');
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    var result = jsonDecode(response.body);
-    var latLong = result['results'][0]['locations'][0]['latLng'];
-    var lat = latLong['lat'];
-    var long = latLong['lng'];
+  // final response = await http.get('http://open.mapquestapi.com/geocoding/v1/address?key=${getZipCodeAPIKey()}&postalCode=$zipCode&maxResults=1&thumbMaps=false');
+  // if (response.statusCode == 200) {
+  //   // If the server did return a 200 OK response,
+  //   // then parse the JSON.
+  //   var result = jsonDecode(response.body);
+    var location = await getLatLongFromZip(zipCode);
+    var lat = location['latitude'];
+    var long = location['longitude'];
     geoPoint = Geoflutterfire().point(latitude: lat, longitude: long);
-  } else {
-    print("Error fetching LatLong of ZipCode");
-    geoPoint = Geoflutterfire().point(latitude: 39.78373, longitude: -100.445882);
-  }
+  // } else {
+  //   print("Error fetching LatLong of ZipCode");
+  //   geoPoint = Geoflutterfire().point(latitude: 39.78373, longitude: -100.445882);
+  // }
 
   return geoPoint;
     
@@ -249,4 +251,35 @@ Stream<List<Rating>> getFeedbackForUser(String uid) {
 Future<List<QueryDocumentSnapshot>> getRepostTokenPackages() async {
   var snap = await FirebaseFirestore.instance.collection('RepostTokenPackages').get();
   return snap.docs;
+}
+
+getLatLongFromZip(String zip) async {
+  var pref = await SharedPreferences.getInstance();
+  var lat = pref.getDouble('$zip-lat');
+  var long = pref.getDouble('$zip-long');
+  if(lat!=null && long!=null){
+    return {
+      'latitude': lat,
+      'longitude': long
+    };
+  } 
+  else {
+    String path = 'assets/zips.json';
+    var zips = await rootBundle.loadString(path);
+    var zipJson = List<dynamic>.from(jsonDecode(zips));
+    var location = zipJson.firstWhere(
+      (element) => element['zip code'] == zip,
+      orElse: () => {
+        'latitude': 39.78373,
+        'longitude': -100.445882,
+      });
+    pref.setDouble('$zip-lat', location['latitude']);
+    pref.setDouble('$zip-long', location['longitude']);
+    return location;
+  }
+}
+
+Future<int> getUserListingCount(String uid) async {
+  var snap = await FirebaseFirestore.instance.collection('Listings').where('uid', isEqualTo: uid).get();
+  return snap.size;
 }

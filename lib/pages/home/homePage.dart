@@ -263,11 +263,8 @@ class _HomePageState extends State<HomePage> {
                   )
                 ),
               ),
-                  SizedBox(height: _height/20),
-                    OutlinedButton(
-                    child: Text("Sign Out"),
-                    onPressed: signOut,  
-                  ),
+
+                 
 
                  
                   ]

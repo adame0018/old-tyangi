@@ -20,8 +20,9 @@ class Chat extends StatelessWidget {
   final String peerId;
   final String peerAvatar;
   final String groupChatId;
+  final String peerName;
 
-  Chat({Key key, @required this.peerId, @required this.peerAvatar, @required this.groupChatId})
+  Chat({Key key, @required this.peerId, @required this.peerAvatar, @required this.groupChatId, @required this.peerName})
       : super(key: key);
 
   @override
@@ -38,7 +39,7 @@ class Chat extends StatelessWidget {
           onPressed: Navigator.of(context).pop,
         ),
         title: Text(
-          'CHAT',
+          peerName,
           style: Theme.of(context).textTheme.headline6,
         ),
       ),

@@ -15,13 +15,14 @@ class ListingCard extends StatefulWidget {
     @required this.pageTag,
     @required this.listing,
     this.showMenu = false,
+    this.showExpiration = false
   }) : super(key: key);
 
   final double width, aspectRatioCard, aspectRatioImage, fontSizeMultiple;
   final Listing listing;
   final String pageTag;
   static const List<String> menuChoices = ["Mark as Sold", "Renew"];
-  final bool showMenu;
+  final bool showMenu, showExpiration;
 
   @override
   _ListingCardState createState() => _ListingCardState();
@@ -50,6 +51,16 @@ class _ListingCardState extends State<ListingCard> {
         print("Promote");
         break;
 
+    }
+  }
+
+  String expirationTimeToString(Timestamp expirationTime){
+    int inDays = expirationTime.toDate().difference(DateTime.now()).inDays;
+    int inHours = expirationTime.toDate().difference(DateTime.now()).inHours < 1 ? 1 : expirationTime.toDate().difference(DateTime.now()).inHours;
+    if(inHours >= 24){
+      return "$inDays "+"${inDays>1?"days":"day"}";
+    } else {
+        return "$inHours "+"${inHours>1?"hours":"hour"}";
     }
   }
 
@@ -111,6 +122,16 @@ class _ListingCardState extends State<ListingCard> {
                               fontWeight: FontWeight.w500
                               ),
                       ),
+                    widget.showExpiration ? 
+                    Row(
+                      children: [
+                        Text("Expires in: ${expirationTimeToString(widget.listing.expirationTime)}", 
+                          style: TextStyle(
+                              fontSize: (_height/70)*widget.fontSizeMultiple
+                            )
+                          )
+                      ],
+                    ) :
                     Row(
                       children: [
                         Icon(Icons.location_on_outlined, size: _height/70,),

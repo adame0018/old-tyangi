@@ -46,7 +46,8 @@ class _BodyState extends State<Body> {
         builder: (_) => Chat(
           peerId: peerId, 
           peerAvatar: peerUser.profilePic, 
-          groupChatId: chat.data()['chatRoom']
+          groupChatId: chat.data()['chatRoom'],
+          peerName: peerUser.name,
           )
         )
       );
@@ -79,7 +80,8 @@ class _BodyState extends State<Body> {
         builder: (_) => Chat(
           peerId: peerId, 
           peerAvatar: peerUser.profilePic, 
-          groupChatId: chatRoom.id
+          groupChatId: chatRoom.id,
+          peerName: peerUser.name,
           )
         )
       );

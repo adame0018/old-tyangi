@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initPlatformState() async {
     await Purchases.setDebugLogsEnabled(true);
-    await Purchases.setup("DYWlmTdAAhwQZarZEvbwoWLSgPoEJVBQ");
+    await Purchases.setup("zTFbHzRQiRefLOcnONqwKkhkmVMPYQtT");
     // try {
     // Offerings offerings = await Purchases.getOfferings();
     // if (offerings.current != null) {

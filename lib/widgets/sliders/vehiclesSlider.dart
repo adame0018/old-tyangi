@@ -47,7 +47,7 @@ class _VehiclesSliderState extends State<VehiclesSlider> {
   List<Widget> getFeaturedCards(int length){
     List<Widget> cards = List<Widget>();
     for(int i=0; i<9-length; i++){
-                  cards.add(FeaturedCard(pageTag: "VehiclesSlider$i", slider: "VehiclesSlider",));
+                  cards.add(FeaturedCard(pageTag: "VehiclesSlider$i", slider: "VehiclesSlider", productIdentifier: "vehicles_slider",));
                 }
     return cards;
   }
@@ -91,7 +91,12 @@ class _VehiclesSliderState extends State<VehiclesSlider> {
                       return ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          ...snapshot.data.map((listing) => ListingCard(pageTag: "VehiclesSlider", listing: Listing.fromJson(listing.data()))).toList(),
+                          ...snapshot.data.map((listing) => 
+                            ListingCard(
+                              pageTag: "VehiclesSlider", 
+                              listing: Listing.fromJson(listing.data()),
+                              showExpiration: true,
+                            )).toList(),
                           ...getFeaturedCards(snapshot.data.length)
 
                         ]

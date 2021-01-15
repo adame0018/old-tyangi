@@ -47,7 +47,7 @@ class _ServicesSliderState extends State<ServicesSlider> {
   List<Widget> getFeaturedCards(int length){
     List<Widget> cards = List<Widget>();
     for(int i=0; i<9-length; i++){
-                  cards.add(FeaturedCard(pageTag: "ServicesSlider$i", slider: "ServicesSlider",));
+                  cards.add(FeaturedCard(pageTag: "ServicesSlider$i", slider: "ServicesSlider", productIdentifier: "services_slider",));
                 }
     return cards;
   }
@@ -91,7 +91,12 @@ class _ServicesSliderState extends State<ServicesSlider> {
                       return ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          ...snapshot.data.map((listing) => ListingCard(pageTag: "ServicesSlider", listing: Listing.fromJson(listing.data()))).toList(),
+                          ...snapshot.data.map((listing) => 
+                            ListingCard(
+                              pageTag: "ServicesSlider", 
+                              listing: Listing.fromJson(listing.data()),
+                              showExpiration: true,
+                            )).toList(),
                           ...getFeaturedCards(snapshot.data.length)
 
                         ]

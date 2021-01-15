@@ -423,6 +423,7 @@ class ChatListState extends State<ChatList> {
                           builder: (context) => Chat(
                                 peerId: snapshot.data.uid,
                                 peerAvatar: snapshot.data.profilePic,
+                                peerName: snapshot.data.name,
                                 groupChatId: document.data()['id'],
                               )));
                 },
