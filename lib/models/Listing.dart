@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Listing {
   String id;
   String title, description, price, zipCode, uid, category, subCategory, contactOption, condition;
-  bool autoRepost;
+  bool autoRepost, sold;
   List<dynamic> images;
   Timestamp createdAt, repostAt, expirationTime;
   Map<String, dynamic> position;
@@ -24,7 +24,8 @@ class Listing {
     @required this.contactOption,
     @required this.condition,
     @required this.position,
-    this.expirationTime
+    this.expirationTime,
+    this.sold
   });
 
   Listing.fromJson(Map<String, dynamic> map){
@@ -46,6 +47,11 @@ class Listing {
     condition = map['condition'];
     position = map['position'];
     expirationTime = map['expirationTime'];
+    if(map['sold']!= null){
+      sold = map['sold'];
+    } else{
+      sold = false;
+    }
     if(map['images'] != null){
       images = List<dynamic>();
       images.addAll(map['images']);
@@ -70,7 +76,8 @@ class Listing {
       'contactOption': contactOption,
       'condition': condition,
       'position': position,
-      'expirationTime': expirationTime
+      'expirationTime': expirationTime,
+      'sold': sold??false,
     };
   }
   

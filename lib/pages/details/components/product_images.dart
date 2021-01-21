@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:shop_app/models/Product.dart';
-
-// import '../../../constants.dart';
 import '../../../utitlities/sizeConfig.dart';
 import '../../../models/Listing.dart';
 import 'package:cached_network_image/cached_network_image.dart';

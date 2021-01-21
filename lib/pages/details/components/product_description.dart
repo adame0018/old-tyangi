@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:shop_app/models/Product.dart';
-
-// import '../../../constants.dart';
 import '../../../utitlities/sizeConfig.dart';
 import '../../../models/Listing.dart';
 
@@ -42,15 +38,17 @@ class _ProductDescriptionState extends State<ProductDescription> {
                 widget.listing.title,
                 style: Theme.of(context).textTheme.headline4,
               ),
-              Text("\$${widget.listing.price}", style: TextStyle(fontSize: 25, color: Theme.of(context).primaryColor),)
+              Text("\$${widget.listing.price}", style: TextStyle(fontSize: 25, color: Theme.of(context).primaryColor),),
+
             ],
           ),
         ),
-        // SizedBox(height: 10,),
-        // Padding(
-        //   padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-        //   child: Text("\$500", style: TextStyle(fontSize: 25, color: Theme.of(context).primaryColor),),
-        // ),
+        SizedBox(height: 10,),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+          child: widget.listing.sold ? Text("Sold",  style: TextStyle(fontSize: 25, color: Theme.of(context).errorColor)) : SizedBox()
+        ),
+        
         SizedBox(height: 10,),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),

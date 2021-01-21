@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// import '../../../models/Product.dart';
 import 'components/body.dart';
 import 'components/custom_app_bar.dart';
 import '../../models/Listing.dart';
@@ -18,8 +17,6 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final ProductDetailsArguments agrs =
-    //     ModalRoute.of(context).settings.arguments;
     return Scaffold(
       backgroundColor: Color(0xFFF5F6F9),
       appBar: CupertinoNavigationBar(

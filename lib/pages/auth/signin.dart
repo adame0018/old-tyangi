@@ -131,12 +131,6 @@ class _SignInState extends State<SignIn> {
         obscureText: isPassword,
         decoration: InputDecoration(
           hintText: hint,
-          // border: OutlineInputBorder(
-          //     borderRadius: BorderRadius.all(Radius.circular(12.0)),
-          //     borderSide: BorderSide(color: Colors.grey.withOpacity(0.6))),
-          // focusedBorder: OutlineInputBorder(
-          //     borderRadius: BorderRadius.all(Radius.circular(12.0)),
-          //     borderSide: BorderSide(color: Colors.blue[200])),
           border: InputBorder.none,
         
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
